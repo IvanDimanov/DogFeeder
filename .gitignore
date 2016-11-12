@@ -1,0 +1,19 @@
+# Development files
+**/node_modules
+
+/notes
+
+# Config scripts
+/config/files/local.json
+/config/files/local*.json
+/npm-scripts/start-services/pm2-ecosystem.json
+
+# Nginx
+/npm-scripts/build-nginx-config/nginx-access.log
+/npm-scripts/build-nginx-config/nginx-error.log
+/npm-scripts/build-nginx-config/nginx.conf
+
+# Log files
+logger/all.log
+services_shared_modules/logger/all.log
+**/npm-debug.log*
