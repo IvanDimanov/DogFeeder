@@ -16,10 +16,8 @@
   },
   "standard": {
     "ignore": [
-      ".git/",
-      "node_modules/",
-      "notes/",
-      "docs"
+      "notes",
+      "front-end/shared/utils.js"
     ]
   },
   "dependencies": {
