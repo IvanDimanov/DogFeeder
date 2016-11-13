@@ -19,6 +19,7 @@ import Layout from './layout'
 import NotFound from '../../components/NotFound'
 
 import Home from '../../components/Home'
+import Profile from '../../components/Profile'
 
 render((
   <MuiThemeProvider>
@@ -26,6 +27,7 @@ render((
       <Route path='/' component={Layout}>
         <IndexRedirect to='home' />
         <Route path='/home' component={Home} />
+        <Route path='/profile' component={Profile} />
         <Route path='*' component={NotFound} />
       </Route>
     </Router>

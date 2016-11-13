@@ -13,7 +13,7 @@ const styles = {
     padding: '10px 10px 30px 10px',
     textAlign: 'center',
     display: 'inline-block',
-    margin: 'auto'
+    margin: '60px auto'
   },
   title: {
     lineHeight: '50px'

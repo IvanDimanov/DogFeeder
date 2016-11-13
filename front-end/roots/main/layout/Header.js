@@ -8,8 +8,8 @@ import Drawer from 'material-ui/Drawer'
 import MenuItem from 'material-ui/MenuItem'
 
 import HomeIcon from 'material-ui/svg-icons/action/home'
+import ProfileIcon from 'material-ui/svg-icons/action/face'
 import ExposureIcon from 'material-ui/svg-icons/image/exposure'
-import FaceIcon from 'material-ui/svg-icons/action/face'
 import SearchIcon from 'material-ui/svg-icons/action/search'
 
 const style = {
@@ -58,19 +58,19 @@ class Header extends Component {
         </Link>
 
         <Link
+          to={'/profile'}
+          onTouchTap={this.toggleOpen}
+          style={style.link}
+        >
+          <MenuItem leftIcon={<ProfileIcon />}>Profile</MenuItem>
+        </Link>
+
+        <Link
           to={'/calculator'}
           onTouchTap={this.toggleOpen}
           style={style.link}
         >
           <MenuItem leftIcon={<ExposureIcon />}>Calculator</MenuItem>
-        </Link>
-
-        <Link
-          to={'/profile'}
-          onTouchTap={this.toggleOpen}
-          style={style.link}
-        >
-          <MenuItem leftIcon={<FaceIcon />}>Profile</MenuItem>
         </Link>
 
         <Link
