@@ -15,7 +15,7 @@ module.exports = {
   },
   output: {
     path: path.resolve('./public'),
-    filename: 'assets/[name].bundle.js'
+    filename: 'assets/js/[name].bundle.js'
   },
 
   cache: process.env.NODE_ENV === 'local',
