@@ -3,7 +3,10 @@
 const path = require('path')
 
 const webpack = require('webpack')
+const DefinePlugin = require('webpack').DefinePlugin
 const DashboardPlugin = require('webpack-dashboard/plugin')
+
+const config = require('../config')
 
 module.exports = {
   entry: {
@@ -35,7 +38,18 @@ module.exports = {
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new DashboardPlugin()
+    new DashboardPlugin(),
+
+    /*
+      We gonna cherry-pick only some configs because
+      not all configurations are suitable to be exposed to the FE
+    */
+    new DefinePlugin({
+      __CONFIG__: JSON.stringify(Object.assign(
+        {environment: config.environment},
+        {'front-end': config['front-end']}
+      ))
+    })
   ],
 
   devServer: {
