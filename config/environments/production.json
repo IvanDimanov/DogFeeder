@@ -1,5 +1,12 @@
 {
   "front-end": {
     "successMessageAutoHideDuration": 3000
+  },
+
+  "database": {
+    "redis": {
+      "host": "127.0.0.1",
+      "port": 6379
+    }
   }
 }
