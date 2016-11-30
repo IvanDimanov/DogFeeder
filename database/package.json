@@ -1,0 +1,26 @@
+{
+  "name": "dog-feeder-database",
+  "version": "0.0.1",
+  "description": "React + MobX + IoT = fun",
+  "readme": "README.md",
+  "license": "MIT",
+  "authors": [
+    "Ivan Dimanov <DogFeeder@idimanov.com>"
+  ],
+  "scripts": {
+    "start": "",
+    "lint": "standard",
+    "build": "npm i"
+  },
+  "engines": {
+    "node": ">=7.0"
+  },
+  "dependencies": {
+    "bluebird": "3.4.6",
+    "node-uuid": "1.4.7",
+    "redis": "2.6.3"
+  },
+  "devDependencies": {
+    "standard": "8.5.0"
+  }
+}
