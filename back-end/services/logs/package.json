@@ -1,0 +1,24 @@
+{
+  "name": "dog-feeder-service-logs",
+  "version": "0.0.1",
+  "description": "React + MobX + IoT = fun",
+  "readme": "README.md",
+  "license": "MIT",
+  "authors": [
+    "Ivan Dimanov <DogFeeder@idimanov.com>"
+  ],
+  "scripts": {
+    "start": "",
+    "lint": "standard",
+    "build": "npm i"
+  },
+  "engines": {
+    "node": ">=7.0"
+  },
+  "dependencies": {
+    "koa": "1.2.4",
+    "koa-body": "1.6.0",
+    "koa-router": "5.4.0"
+  },
+  "devDependencies": {}
+}
