@@ -12,6 +12,12 @@
 
   "services": {
     "logs": {
+      "host": "localhost",
+      "defaultPort": 3100,
+      "totalInitialInstances": 1,
+      "publiclyAccessedRoutes": [
+        "/api/v1/logs"
+      ],
       "routes": {
         "system": {
           "apiPathPrefix": "/api/v1"

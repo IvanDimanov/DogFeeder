@@ -14,7 +14,10 @@
   "scripts": {
     "start": "",
     "lint": "standard",
-    "build": "npm i && node ./npm-scripts/build-all-modules"
+    "build": "npm i && node ./npm-scripts/build-all-modules",
+
+    "start-back-end-local"     : "cross-env NODE_ENV=local      node ./npm-scripts/start-back-end",
+    "start-back-end-production": "cross-env NODE_ENV=production node ./npm-scripts/start-back-end"
   },
   "engines": {
     "node": ">=7.0"
