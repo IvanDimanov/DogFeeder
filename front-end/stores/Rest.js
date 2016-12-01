@@ -9,7 +9,10 @@ function ajax (config) {
   return Observable.create((observer) => {
     $.ajax(config)
       .success((data, textStatus, jqXHR) => observer.next({data, textStatus, jqXHR}) || observer.complete())
-      .fail((jqXHR, textStatus, errorThrown) => observer.error({errorThrown, textStatus, jqXHR}))
+      .fail((jqXHR, textStatus, errorThrown) => {
+        errorThrown && console.error(errorThrown)
+        observer.error({errorThrown, textStatus, jqXHR})
+      })
   })
 }
 

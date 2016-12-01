@@ -9,6 +9,7 @@ import MenuItem from 'material-ui/MenuItem'
 
 import HomeIcon from 'material-ui/svg-icons/action/home'
 import ProfileIcon from 'material-ui/svg-icons/action/face'
+import LogsIcon from 'material-ui/svg-icons/action/assessment'
 import ExposureIcon from 'material-ui/svg-icons/image/exposure'
 import SearchIcon from 'material-ui/svg-icons/action/search'
 
@@ -63,6 +64,14 @@ class Header extends Component {
           style={style.link}
         >
           <MenuItem leftIcon={<ProfileIcon />}>Profile</MenuItem>
+        </Link>
+
+        <Link
+          to={'/logs'}
+          onTouchTap={this.toggleOpen}
+          style={style.link}
+        >
+          <MenuItem leftIcon={<LogsIcon />}>System Logs</MenuItem>
         </Link>
 
         <Link
