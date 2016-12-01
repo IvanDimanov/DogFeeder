@@ -3,8 +3,6 @@
 
 import {Observable} from 'rxjs'
 
-const Rest = {}
-
 function ajax (config) {
   return Observable.create((observer) => {
     $.ajax(config)
@@ -50,8 +48,10 @@ function post (arg) {
   return ajax(config)
 }
 
-Rest.ajax = ajax
-Rest.get = get
-Rest.post = post
+const Rest = {
+  ajax,
+  get,
+  post
+}
 
 export default Rest

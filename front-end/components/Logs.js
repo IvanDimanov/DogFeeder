@@ -3,9 +3,10 @@
 
 import React, {Component} from 'react'
 
-import Rest from '../stores/Rest'
+import LogsStore from '../stores/Logs'
 
 import Paper from 'material-ui/Paper'
+import Subheader from 'material-ui/Subheader'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
 import Snackbar from 'material-ui/Snackbar'
@@ -38,6 +39,7 @@ const styles = {
   },
 
   tableTitle: {
+    width: 'initial',
     display: 'inline-block',
     verticalAlign: 'super'
   },
@@ -45,6 +47,38 @@ const styles = {
   syncButton: {
     width: 20,
     height: 20
+  },
+
+  tableRow: {
+    silly: {
+      color: '#3c763d',
+      backgroundColor: '#dff0d8'
+    },
+
+    debug: {
+      color: '#3c763d',
+      backgroundColor: '#dff0d8'
+    },
+
+    info: {
+      color: '#31708f',
+      backgroundColor: '#d9edf7'
+    },
+
+    warn: {
+      color: '#8a6d3b',
+      backgroundColor: '#fcf8e3'
+    },
+
+    warning: {
+      color: '#8a6d3b',
+      backgroundColor: '#fcf8e3'
+    },
+
+    error: {
+      color: '#a94442',
+      backgroundColor: '#f2dede'
+    }
   }
 }
 
@@ -69,44 +103,10 @@ class Logs extends Component {
       errorMessage: ''
     })
 
-    /**
-    subscriptions[subscriptions.length] = Rest
-      .ajax({
-        method: 'GET',
-        url: 'https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=Rambo&callback=?',
-        dataType: 'json'
-      })
+    subscriptions[subscriptions.length] = LogsStore
+      .getSystemLogs()
       .subscribe({
-        next: ({data: [, titles, descriptions, urls]}) => {
-          const logs = titles
-            .map((title, index) => ({
-              title,
-              description: descriptions[index],
-              url: urls[index]
-            }))
-
-          this.setState({logs})
-        },
-
-        error: () => this.setState({
-          isLoading: false,
-          errorMessage: 'Unable to load System logs'
-        }),
-
-        complete: () => this.setState({isLoading: false})
-      })
-    /**/
-
-    subscriptions[subscriptions.length] = Rest
-      .ajax({
-        method: 'GET',
-        url: 'http://localhost:3000/api/v1/logs/system',
-        dataType: 'json'
-      })
-      .subscribe({
-        next: ({data}) => {
-          console.log(data)
-        },
+        next: ({data}) => this.setState({logs: data}),
 
         error: () => this.setState({
           isLoading: false,
@@ -140,6 +140,18 @@ class Logs extends Component {
       </div>
 
       <Paper style={Object.assign({}, sharedStyles.paper, styles.paper)} zDepth={1}>
+        <div style={{textAlign: 'center'}}>
+          <Subheader style={styles.tableTitle}>System Logs</Subheader>
+
+          <IconButton
+            onTouchTap={this.sync}
+            iconStyle={styles.syncButton}
+            disabled={isLoading}
+          >
+            <SyncIcon color={'grey'} />
+          </IconButton>
+        </div>
+
         <Table
           fixedHeader
           fixedFooter
@@ -150,23 +162,11 @@ class Logs extends Component {
             adjustForCheckbox={false}
           >
             <TableRow>
-              <TableHeaderColumn colSpan={3} style={{textAlign: 'center'}}>
-                <div style={styles.tableTitle}>System Logs</div>
-
-                <IconButton
-                  onTouchTap={this.sync}
-                  iconStyle={styles.syncButton}
-                  disabled={isLoading}
-                >
-                  <SyncIcon color={'grey'} />
-                </IconButton>
-              </TableHeaderColumn>
-            </TableRow>
-
-            <TableRow>
-              <TableHeaderColumn>Title</TableHeaderColumn>
-              <TableHeaderColumn>Description</TableHeaderColumn>
-              <TableHeaderColumn>URL</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '8%'}}>mService</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '12%'}}>Type</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '40%'}}>Message</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '20%'}}>Request id</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '20%'}}>Created at</TableHeaderColumn>
             </TableRow>
           </TableHeader>
 
@@ -174,11 +174,13 @@ class Logs extends Component {
             displayRowCheckbox={false}
             showRowHover
           >
-            {logs.map(({title, description, url}, index) => (
-              <TableRow key={index}>
-                <TableRowColumn>{title}</TableRowColumn>
-                <TableRowColumn>{description}</TableRowColumn>
-                <TableRowColumn>{url}</TableRowColumn>
+            {logs.map(({type, message, requestId, serviceName, instanceId, createdAt}, index) => (
+              <TableRow key={index} style={styles.tableRow[type]}>
+                <TableRowColumn style={{width: '8%'}}>{serviceName}: {instanceId}</TableRowColumn>
+                <TableRowColumn style={{width: '12%'}}>{type.toUpperCase()}</TableRowColumn>
+                <TableRowColumn style={{width: '40%'}}>{message}</TableRowColumn>
+                <TableRowColumn style={{width: '20%'}}>{requestId}</TableRowColumn>
+                <TableRowColumn style={{width: '20%'}}>{createdAt}</TableRowColumn>
               </TableRow>
             ))}
           </TableBody>

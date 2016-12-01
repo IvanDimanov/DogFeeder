@@ -1,32 +1,5 @@
 'use strict'
 
-/**
-import Rest from '../stores/Rest'
-const searchText = 'Rambo'
-Rest
-  .ajax({
-    method: 'GET',
-    url: `https://en.wikipedia.org/w/api.php?action=opensearch&format=json&search=${encodeURIComponent(searchText)}&callback=?`,
-    dataType: 'json'
-  })
-  .subscribe({
-    next: ({data, textStatus, jqXHR}) => console.log('next', data, textStatus, jqXHR),
-    error: (a, b, c, d, e) => console.log('error', a, b, c, d, e),
-    complete: () => console.log('complete')
-  })
-/**/
-
-/**
-import Rest from '../stores/Rest'
-Rest
-  .get('http://idimanov.com/dog-feeder/test-api/user.php')
-  .subscribe({
-    next: ({data, textStatus, jqXHR}) => console.log('next', data, textStatus, jqXHR),
-    error: (a, b, c, d, e) => console.log('error', a, b, c, d, e),
-    complete: () => console.log('complete')
-  })
-/**/
-
 import React from 'react'
 
 import Paper from 'material-ui/Paper'
