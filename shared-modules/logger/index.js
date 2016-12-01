@@ -66,17 +66,25 @@ function * koaMiddleware (next) {
     const end = process.hrtime(start)
     const humanTotalTime = prettyHrtime(end).replace(' ', '')
 
-    /* Log uncaught downstream errors */
-    logger.error(`--> ${this.method} ${this.originalUrl} ${error.status || 500} ${humanTotalTime} ${bytes(length)}`)
+    const errorUuid = uuid.v4()
+    this.body = {
+      errorCode: 'InternalServerError',
+      errorMessage: 'We are unable to proceed with your request. Please excuse us and try again later.',
+      errorUuid
+    }
 
-    throw error
+    /* Log uncaught downstream errors */
+    logger.error('Internal Service Error', errorUuid, error.stack)
+    logger.error(`--> ${this.method} ${this.originalUrl} ${error.status || 500} ${humanTotalTime} ${length ? bytes(length) : ''}`)
+
+    return
   }
 
   const length = this.response.length
   const end = process.hrtime(start)
   const humanTotalTime = prettyHrtime(end).replace(' ', '')
 
-  logger.info(`--> ${this.method} ${this.originalUrl} ${this.status || 500} ${humanTotalTime} ${bytes(length)}`)
+  logger.info(`--> ${this.method} ${this.originalUrl} ${this.status || 500} ${humanTotalTime} ${length ? bytes(length) : ''}`)
 }
 
 const logger = {
