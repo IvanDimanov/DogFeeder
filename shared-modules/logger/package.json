@@ -7,6 +7,10 @@
   "authors": [
     "Ivan Dimanov <DogFeeder@idimanov.com>"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanDimanov/DogFeeder.git"
+  },
   "scripts": {
     "start": "",
     "lint": "standard",

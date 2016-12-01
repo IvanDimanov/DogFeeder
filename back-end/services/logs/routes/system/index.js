@@ -33,7 +33,7 @@ const koaRoutes = koaRouter()
 
     logger.debug('System Logs returned')
 
-    this.body = logs.reverse()
+    this.body = logs.reverse().slice(0, 5)
   })
 
 module.exports = koaRoutes
