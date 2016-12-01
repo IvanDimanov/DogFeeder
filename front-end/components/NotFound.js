@@ -7,13 +7,13 @@ import Paper from 'material-ui/Paper'
 import FloatingActionButton from 'material-ui/FloatingActionButton'
 import ActionHome from 'material-ui/svg-icons/action/home'
 
+import sharedStyles from '../shared/styles'
+
 const styles = {
   paper: {
-    width: 350,
     padding: '10px 10px 30px 10px',
     textAlign: 'center',
-    display: 'inline-block',
-    margin: '60px auto'
+    display: 'inline-block'
   },
   title: {
     lineHeight: '50px'
@@ -23,7 +23,7 @@ const styles = {
   }
 }
 
-const NotFound = ({location}) => <Paper style={styles.paper} zDepth={1}>
+const NotFound = ({location}) => <Paper style={Object.assign({}, sharedStyles.paper, styles.paper)} zDepth={1}>
   <h3 style={styles.title}>
     404: Page Not Found
 

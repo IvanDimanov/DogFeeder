@@ -10,7 +10,8 @@
   "scripts": {
     "start": "",
     "start-local": "cross-env NODE_ENV=local webpack-dashboard webpack-dev-server --content-base=./public --inline --progress --colors --hot",
-    "lint": "standard"
+    "lint": "standard",
+    "build": "npm i"
   },
   "standard": {
     "ignore": [

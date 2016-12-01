@@ -16,6 +16,8 @@ import profileStyles from '../styles'
 
 const config = __CONFIG__
 
+const subscriptions = []
+
 class ChangePassword extends Component {
   constructor (props) {
     super(props)

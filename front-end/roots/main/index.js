@@ -20,6 +20,7 @@ import NotFound from '../../components/NotFound'
 
 import Home from '../../components/Home'
 import Profile from '../../components/Profile'
+import Logs from '../../components/Logs'
 
 render((
   <MuiThemeProvider>
@@ -28,6 +29,7 @@ render((
         <IndexRedirect to='home' />
         <Route path='/home' component={Home} />
         <Route path='/profile' component={Profile} />
+        <Route path='/logs' component={Logs} />
         <Route path='*' component={NotFound} />
       </Route>
     </Router>

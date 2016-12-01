@@ -1,11 +1,6 @@
 'use strict'
 
 const profileStyles = {
-  paper: {
-    padding: 30,
-    margin: '60px auto'
-  },
-
   header: {
     textAlign: 'center'
   },
