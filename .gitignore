@@ -10,9 +10,9 @@ front-end/public/**/*.bundle.*
 /npm-scripts/start-back-end/pm2-ecosystem.json
 
 # Nginx
-/npm-scripts/build-nginx-config/nginx-access.log
-/npm-scripts/build-nginx-config/nginx-error.log
-/npm-scripts/build-nginx-config/nginx.conf
+/npm-scripts/start-nginx/nginx-access.log
+/npm-scripts/start-nginx/nginx-error.log
+/npm-scripts/start-nginx/nginx.conf
 
 # Log files
 **/npm-debug.log*

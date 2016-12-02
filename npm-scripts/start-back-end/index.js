@@ -79,11 +79,11 @@ function startWithServiceConfig () {
       */
 
       if (error) {
-        console.error(`Error in starting service "${'json config'}" with command "pm2": ${error}`)
+        console.error(`Error in starting "${command}": ${error}`)
       }
 
       if (stderr) {
-        console.error(`Error executing command "pm2" for service "${'json config'}": ${stderr}`)
+        console.error(`Error executing command "${command}": ${stderr}`)
       }
 
       console.log('pm2 successfully started')

@@ -13,9 +13,9 @@
   },
   "scripts": {
     "start": "",
-    "start-local": "cross-env NODE_ENV=local webpack-dashboard webpack-dev-server --content-base=./public --inline --progress --colors --hot",
+    "start-dashboard": "cross-env NODE_ENV=local cross-env dashboard=true webpack-dashboard webpack-dev-server --content-base=./public --inline --progress --colors --hot",
     "lint": "standard",
-    "build": "npm i"
+    "build": "npm i && webpack"
   },
   "standard": {
     "ignore": [

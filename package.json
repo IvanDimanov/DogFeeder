@@ -12,12 +12,19 @@
     "url": "git+https://github.com/IvanDimanov/DogFeeder.git"
   },
   "scripts": {
-    "start": "",
     "lint": "standard",
-    "build": "npm i && node ./npm-scripts/build-all-modules",
+
+    "start-local"     : "npm run build-local      && npm run start-back-end-local      && npm run start-nginx-local",
+    "start-production": "npm run build-production && npm run start-back-end-production && npm run start-nginx-production",
+
+    "build-local"     : "npm i && cross-env NODE_ENV=local      node ./npm-scripts/build-all-modules",
+    "build-production": "npm i && cross-env NODE_ENV=production node ./npm-scripts/build-all-modules",
 
     "start-back-end-local"     : "cross-env NODE_ENV=local      node ./npm-scripts/start-back-end",
-    "start-back-end-production": "cross-env NODE_ENV=production node ./npm-scripts/start-back-end"
+    "start-back-end-production": "cross-env NODE_ENV=production node ./npm-scripts/start-back-end",
+
+    "start-nginx-local"     : "cross-env NODE_ENV=local      node ./npm-scripts/start-nginx",
+    "start-nginx-production": "cross-env NODE_ENV=production node ./npm-scripts/start-nginx"
   },
   "engines": {
     "node": ">=7.0"

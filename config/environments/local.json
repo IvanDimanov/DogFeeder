@@ -1,5 +1,7 @@
 {
   "front-end": {
+    "host": "localhost",
+    "port": 8000,
     "successMessageAutoHideDuration": 3000
   },
 
