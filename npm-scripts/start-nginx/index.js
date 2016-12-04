@@ -35,7 +35,13 @@ function getLoadBalancerLocationTemplates (seviceName, serviceConfig) {
   function getLocation (route) {
     return `
     location ~ ^${route}(.*)$ {
-      proxy_pass http://${seviceName}-balancer$uri;
+      if ($args) {
+        proxy_pass http://${seviceName}-balancer$uri?$args;
+      }
+
+      if ($args = '') {
+        proxy_pass http://${seviceName}-balancer$uri;
+      }
     }`
   }
 
