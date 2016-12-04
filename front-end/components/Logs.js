@@ -79,6 +79,11 @@ const styles = {
       color: '#a94442',
       backgroundColor: '#f2dede'
     }
+  },
+
+  tableCell: {
+    textOverflow: 'initial',
+    whiteSpace: 'pre'
   }
 }
 
@@ -176,11 +181,11 @@ class Logs extends Component {
           >
             {logs.map(({type, message, requestId, serviceName, instanceId, createdAt}, index) => (
               <TableRow key={index} style={styles.tableRow[type]}>
-                <TableRowColumn style={{width: '8%'}}>{serviceName}: {instanceId}</TableRowColumn>
-                <TableRowColumn style={{width: '12%'}}>{type.toUpperCase()}</TableRowColumn>
-                <TableRowColumn style={{width: '40%'}}>{message}</TableRowColumn>
-                <TableRowColumn style={{width: '20%'}}>{requestId}</TableRowColumn>
-                <TableRowColumn style={{width: '20%'}}>{createdAt}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '8%'}, styles.tableCell)}>{serviceName}: {instanceId}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '12%'}, styles.tableCell)}>{type.toUpperCase()}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '40%'}, styles.tableCell)}>{message}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '20%'}, styles.tableCell)}>{requestId}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '20%'}, styles.tableCell)}>{createdAt}</TableRowColumn>
               </TableRow>
             ))}
           </TableBody>
