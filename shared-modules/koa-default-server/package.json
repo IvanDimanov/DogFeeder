@@ -23,5 +23,7 @@
     "koa": "1.2.4",
     "koa-body": "1.6.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "koa-cors": "0.0.16"
+  }
 }

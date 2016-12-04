@@ -5,6 +5,7 @@ const path = require('path')
 
 const koa = require('koa')
 const koaBody = require('koa-body')
+const koaCors = require('koa-cors')
 
 const config = require('../../config')
 const logger = require('../logger')
@@ -25,6 +26,11 @@ const app = koa()
 app
   .use(logger.koaMiddleware)
   .use(koaBody())
+
+/* Boost the Local development by letting any FE application use this BackEnd */
+if (config.environment === 'local') {
+  app.use(koaCors())
+}
 
 /* Bind all service Routes from directory './routes' to the current koa 'app' server */
 ;(() => fs

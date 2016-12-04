@@ -8,6 +8,9 @@ const DashboardPlugin = require('webpack-dashboard/plugin')
 
 const config = require('../config')
 
+/* Resolves something close to 8080 */
+const developmentPort = config['front-end'].port + 80
+
 const plugin = [
   /*
     We gonna cherry-pick only some configs because
@@ -36,7 +39,7 @@ const mainEntry = [
 /* Secure Webpack Hot reload when we have standalone calls */
 if (process.env.dashboard) {
   mainEntry.push(
-    'webpack-dev-server/client?http://127.0.0.1:8000',
+    `webpack-dev-server/client?http://${config['front-end'].host}:${developmentPort}`,
     'webpack/hot/only-dev-server'
   )
 }
@@ -65,5 +68,13 @@ module.exports = {
     }]
   },
 
-  plugins: plugin
+  plugins: plugin,
+
+  devServer: {
+    contentBase: './public',
+    port: developmentPort,
+    stats: {
+      colors: true
+    }
+  }
 }
