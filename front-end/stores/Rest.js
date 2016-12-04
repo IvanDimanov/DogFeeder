@@ -1,11 +1,20 @@
-/* global $ */
+/* global $ __CONFIG__ */
 'use strict'
 
 import {Observable} from 'rxjs'
 
-function ajax (config) {
+const config = __CONFIG__
+
+function ajax (options) {
   return Observable.create((observer) => {
-    $.ajax(config)
+    /* If the App is been developed separately (on a different port) we need to make sue that we still use the default FE gateway */
+    /* NODE: CORS should be enabled on the BE */
+    if (config.environment === 'local') {
+      const port = config['front-end'].port === 80 ? '' : `:${config['front-end'].port}`
+      options.url = `http://${config['front-end'].host}${port}/${options.url}`
+    }
+
+    $.ajax(options)
       .success((data, textStatus, jqXHR) => observer.next({data, textStatus, jqXHR}) || observer.complete())
       .fail((jqXHR, textStatus, errorThrown) => {
         errorThrown && console.error(errorThrown)
@@ -16,36 +25,36 @@ function ajax (config) {
 
 /* Short-hand AJAX GET */
 function get (arg) {
-  const config = {method: 'GET'}
+  const options = {method: 'GET'}
 
   if (arg) {
     if (typeof arg === 'object') {
       delete arg.method
-      Object.assign(config, arg)
+      Object.assign(options, arg)
     }
     if (typeof arg === 'string') {
-      config.url = arg
+      options.url = arg
     }
   }
 
-  return ajax(config)
+  return ajax(options)
 }
 
 /* Short-hand AJAX POST */
 function post (arg) {
-  const config = {method: 'POST'}
+  const options = {method: 'POST'}
 
   if (arg) {
     if (typeof arg === 'object') {
       delete arg.method
-      Object.assign(config, arg)
+      Object.assign(options, arg)
     }
     if (typeof arg === 'string') {
-      config.url = arg
+      options.url = arg
     }
   }
 
-  return ajax(config)
+  return ajax(options)
 }
 
 const Rest = {
