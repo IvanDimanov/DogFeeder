@@ -10,8 +10,11 @@ function ajax (options) {
     /* If the App is been developed separately (on a different port) we need to make sue that we still use the default FE gateway */
     /* NODE: CORS should be enabled on the BE */
     if (config.environment === 'local') {
+      /* Clears possible issues like "http://localhost:8000//api/v1//test"  =>  "http://localhost:8000/api/v1/test" */
+      options.url = `/${options.url}`.replace(/\/\//g, '/')
+
       const port = config['front-end'].port === 80 ? '' : `:${config['front-end'].port}`
-      options.url = `http://${config['front-end'].host}${port}/${options.url}`
+      options.url = `http://${config['front-end'].host}${port}${options.url}`
     }
 
     $.ajax(options)
