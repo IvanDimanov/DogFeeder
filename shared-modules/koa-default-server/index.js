@@ -32,6 +32,8 @@ if (config.environment === 'local') {
   app.use(koaCors())
 }
 
+require('koa-qs')(app)
+
 /* Bind all service Routes from directory './routes' to the current koa 'app' server */
 ;(() => fs
   /* Get all service HTTP routes */

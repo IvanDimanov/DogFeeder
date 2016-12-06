@@ -1,0 +1,29 @@
+{
+  "name": "dog-feeder-service-auth",
+  "version": "0.0.1",
+  "description": "React + MobX + IoT = fun",
+  "readme": "README.md",
+  "license": "MIT",
+  "authors": [
+    "Ivan Dimanov <DogFeeder@idimanov.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanDimanov/DogFeeder.git"
+  },
+  "scripts": {
+    "start": "",
+    "lint": "standard",
+    "build": "npm i"
+  },
+  "engines": {
+    "node": ">=7.0"
+  },
+  "dependencies": {
+    "bluebird": "3.4.6",
+    "koa-router": "5.4.0",
+    "redis": "2.6.3",
+    "serp": "1.0.12"
+  },
+  "devDependencies": {}
+}

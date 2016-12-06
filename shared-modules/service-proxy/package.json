@@ -1,0 +1,27 @@
+{
+  "name": "dog-feeder-service-proxy",
+  "version": "0.0.1",
+  "description": "React + MobX + IoT = fun",
+  "readme": "README.md",
+  "license": "MIT",
+  "authors": [
+    "Ivan Dimanov <DogFeeder@idimanov.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanDimanov/DogFeeder.git"
+  },
+  "scripts": {
+    "start": "",
+    "lint": "standard",
+    "build": "npm i"
+  },
+  "engines": {
+    "node": ">=7.0"
+  },
+  "dependencies": {
+    "request": "2.79.0",
+    "request-promise": "4.1.1"
+  },
+  "devDependencies": {}
+}
