@@ -17,14 +17,14 @@ global.instanceId = 1
 global.requestId = uuid.v4()
 
 const dbConfig = config.database.redis
-const client = redis.createClient(dbConfig.port, dbConfig.host)
+const redisClient = redis.createClient(dbConfig.port, dbConfig.host)
 
 /* Use Promises instead of callbacks: http://redis.js.org/#redis-a-nodejs-redis-client-usage-example-promises */
 bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
-client.on('ready', () => logger.debug(`Redis connection established to ${toString(dbConfig)}`))
-client.on('error', (error) => logger.error(`Error while setting Redis with connection ${toString(dbConfig)}: ${toString(error)}`))
+redisClient.on('ready', () => logger.debug(`Redis connection established to ${toString(dbConfig)}`))
+redisClient.on('error', (error) => logger.error(`Error while setting Redis with connection ${toString(dbConfig)}: ${toString(error)}`))
 
 /* Get a descriptive description on
    - which migrations we have saved in files
@@ -42,7 +42,7 @@ client.on('error', (error) => logger.error(`Error while setting Redis with conne
     /* Secure consistent order of execution */
     .sort()
 
-  const alreadyCompletedMigrations = await client
+  const alreadyCompletedMigrations = await redisClient
     .lrangeAsync('migrations', 0, -1)
 
   /* Be sure that all previously executed Migrations are still available as a source */
@@ -70,11 +70,11 @@ client.on('error', (error) => logger.error(`Error while setting Redis with conne
   .map((itemPath) => {
     const migration = require(path.resolve(__dirname, './migrations', itemPath))
     return migration
-      .up(client)
+      .up(redisClient)
       .then(() => {
         logger.debug('Successfully migrated:', itemPath)
         /* Be sure not to migrate the same script again */
-        return client.rpushAsync('migrations', itemPath)
+        return redisClient.rpushAsync('migrations', itemPath)
       })
   }))
 )

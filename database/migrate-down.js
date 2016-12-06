@@ -17,14 +17,14 @@ global.instanceId = 1
 global.requestId = uuid.v4()
 
 const dbConfig = config.database.redis
-const client = redis.createClient(dbConfig.port, dbConfig.host)
+const redisClient = redis.createClient(dbConfig.port, dbConfig.host)
 
 /* Use Promises instead of callbacks: http://redis.js.org/#redis-a-nodejs-redis-client-usage-example-promises */
 bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
-client.on('ready', () => logger.debug(`Redis connection established to ${toString(dbConfig)}`))
-client.on('error', (error) => logger.error(`Error while running Redis with connection ${toString(dbConfig)}: ${toString(error)}`))
+redisClient.on('ready', () => logger.debug(`Redis connection established to ${toString(dbConfig)}`))
+redisClient.on('error', (error) => logger.error(`Error while running Redis with connection ${toString(dbConfig)}: ${toString(error)}`))
 
 const migrationPath = process.argv[2]
 ;(async function main () {
@@ -38,7 +38,7 @@ const migrationPath = process.argv[2]
     throw new ReferenceError(`Unable to access migration file "${migrationPath}": ${toString(error)}`)
   }
 
-  const alreadyCompletedMigrations = await client
+  const alreadyCompletedMigrations = await redisClient
     .lrangeAsync('migrations', 0, -1)
 
   const migrationIndex = alreadyCompletedMigrations.indexOf(migrationPath)
@@ -56,11 +56,11 @@ const migrationPath = process.argv[2]
   .map((itemPath) => {
     const migration = require(path.resolve(__dirname, './migrations', itemPath))
     return migration
-      .down(client)
+      .down(redisClient)
       .then(() => {
         logger.debug('Successfully downgraded migration:', itemPath)
         /* Be sure not to downgraded the migrate the same script again */
-        return client.lremAsync('migrations', 0, itemPath)
+        return redisClient.lremAsync('migrations', 0, itemPath)
       })
   }))
 )
