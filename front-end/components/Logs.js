@@ -167,9 +167,9 @@ class Logs extends Component {
             adjustForCheckbox={false}
           >
             <TableRow>
-              <TableHeaderColumn style={{width: '8%'}}>mService</TableHeaderColumn>
-              <TableHeaderColumn style={{width: '12%'}}>Type</TableHeaderColumn>
-              <TableHeaderColumn style={{width: '40%'}}>Message</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '5%'}}>mService</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '5%'}}>Type</TableHeaderColumn>
+              <TableHeaderColumn style={{width: '50%'}}>Message</TableHeaderColumn>
               <TableHeaderColumn style={{width: '20%'}}>Request id</TableHeaderColumn>
               <TableHeaderColumn style={{width: '20%'}}>Created at</TableHeaderColumn>
             </TableRow>
@@ -181,9 +181,9 @@ class Logs extends Component {
           >
             {logs.map(({type, message, requestId, serviceName, instanceId, createdAt}, index) => (
               <TableRow key={index} style={styles.tableRow[type]}>
-                <TableRowColumn style={Object.assign({width: '8%'}, styles.tableCell)}>{serviceName}: {instanceId}</TableRowColumn>
-                <TableRowColumn style={Object.assign({width: '12%'}, styles.tableCell)}>{type.toUpperCase()}</TableRowColumn>
-                <TableRowColumn style={Object.assign({width: '40%'}, styles.tableCell)}>{message}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '5%'}, styles.tableCell)}>{serviceName}: {instanceId}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '5%'}, styles.tableCell)}>{type.toUpperCase()}</TableRowColumn>
+                <TableRowColumn style={Object.assign({width: '50%'}, styles.tableCell)}>{message}</TableRowColumn>
                 <TableRowColumn style={Object.assign({width: '20%'}, styles.tableCell)}>{requestId}</TableRowColumn>
                 <TableRowColumn style={Object.assign({width: '20%'}, styles.tableCell)}>{createdAt}</TableRowColumn>
               </TableRow>
