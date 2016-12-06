@@ -1,5 +1,5 @@
 {
-  "name": "dog-feeder-koa-default-server",
+  "name": "dog-feeder-session",
   "version": "0.0.1",
   "description": "React + MobX + IoT = fun",
   "readme": "README.md",
@@ -20,11 +20,8 @@
     "node": ">=7.0"
   },
   "dependencies": {
-    "koa": "1.2.4",
-    "koa-body": "1.6.0",
-    "koa-qs": "2.0.0"
+    "jwt-simple": "0.5.1",
+    "koa-jwt": "1.2.0"
   },
-  "devDependencies": {
-    "koa-cors": "0.0.16"
-  }
+  "devDependencies": {}
 }

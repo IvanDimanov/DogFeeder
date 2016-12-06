@@ -13,13 +13,13 @@ const config = require('../../config')
 const {toString} = require('../utils')
 
 const dbConfig = config.database.redis
-const client = redis.createClient(dbConfig.port, dbConfig.host)
+const redisClient = redis.createClient(dbConfig.port, dbConfig.host)
 
 /* Use Promises instead of callbacks: http://redis.js.org/#redis-a-nodejs-redis-client-usage-example-promises */
 bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
-client.on('error', (error) => logger.error(`Error while setting Redis with connection ${toString(dbConfig)}: ${toString(error)}`))
+redisClient.on('error', (error) => logger.error(`Error while setting Redis with connection ${toString(dbConfig)}: ${toString(error)}`))
 
 const serverId = `${os.hostname()} - ${os.type()}/${os.release()}`
 
@@ -45,7 +45,7 @@ async function custom (type, ...messages) {
   console.log(createdAt, log)
 
   /* Keep all logs into sorted set so we can easily paginate or filter by date */
-  await client
+  await redisClient
     .zaddAsync('logs', date.getTime(), toString(log))
 }
 
