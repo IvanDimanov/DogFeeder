@@ -1,5 +1,6 @@
 {
   "front-end": {
+    "protocol": "http",
     "host": "localhost",
     "port": 8000,
     "successMessageAutoHideDuration": 3000
@@ -22,6 +23,35 @@
       ],
       "routes": {
         "system": {
+          "apiPathPrefix": "/api/v1"
+        }
+      }
+    },
+
+    "auth": {
+      "host": "localhost",
+      "defaultPort": 3200,
+      "totalInitialInstances": 1,
+      "publiclyAccessedRoutes": [
+        "/api/v1/auth"
+      ],
+      "jwtSecretsFileName": "jwt",
+      "routes": {
+        "default": {
+          "apiPathPrefix": "/api/v1"
+        }
+      }
+    },
+
+    "roles": {
+      "host": "localhost",
+      "defaultPort": 3300,
+      "totalInitialInstances": 1,
+      "publiclyAccessedRoutes": [
+        "/api/v1/roles"
+      ],
+      "routes": {
+        "default": {
           "apiPathPrefix": "/api/v1"
         }
       }
