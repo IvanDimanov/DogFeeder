@@ -44,7 +44,7 @@ const koaRoutes = koaRouter({
       .lrangeAsync('roles', 0, -1)
       .map(jsonParseSafe)
 
-    logger.info('Successfully found found all system roles', roles)
+    logger.debug('Successfully found found all system roles', roles)
     this.body = roles
   })
 

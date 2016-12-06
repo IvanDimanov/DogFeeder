@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const uuid = require('node-uuid')
+const uuid = require('uuid/v4')
 const redis = require('redis')
 const bluebird = require('bluebird')
 
@@ -14,7 +14,7 @@ const {toString} = require('../shared-modules/utils')
 /* Used in logging */
 global.serviceName = 'DB Migrate Up'
 global.instanceId = 1
-global.requestId = uuid.v4()
+global.requestId = uuid()
 
 const dbConfig = config.database.redis
 const redisClient = redis.createClient(dbConfig.port, dbConfig.host)

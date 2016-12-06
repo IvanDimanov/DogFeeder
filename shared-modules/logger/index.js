@@ -2,7 +2,7 @@
 
 const os = require('os')
 
-const uuid = require('node-uuid')
+const uuid = require('uuid/v4')
 const bytes = require('bytes')
 const prettyHrtime = require('pretty-hrtime')
 
@@ -54,7 +54,7 @@ async function custom (type, ...messages) {
 function * koaMiddleware (next) {
   const start = process.hrtime()
 
-  global.requestId = this.request.header['x-request-id'] || uuid.v4()
+  global.requestId = this.request.header['x-request-id'] || uuid()
   this.set('x-request-id', global.requestId)
 
   logger.info(`<-- ${this.method} ${this.originalUrl}`)
@@ -66,7 +66,7 @@ function * koaMiddleware (next) {
     const end = process.hrtime(start)
     const humanTotalTime = prettyHrtime(end).replace(' ', '')
 
-    const errorUuid = uuid.v4()
+    const errorUuid = uuid()
     this.body = {
       errorCode: 'InternalServerError',
       errorMessage: 'We are unable to proceed with your request. Please excuse us and try again later.',
