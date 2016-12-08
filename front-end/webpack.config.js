@@ -11,7 +11,7 @@ const config = require('../config')
 /* Resolves something close to 8080 */
 const developmentPort = config['front-end'].port + 80
 
-const plugin = [
+const plugins = [
   /*
     We gonna cherry-pick only some configs because
     not all configurations are suitable to be exposed to the FE
@@ -26,28 +26,28 @@ const plugin = [
 
 /* Secure Webpack-Dashboard standalone calls */
 if (process.env.dashboard) {
-  plugin.push(
+  plugins.push(
     new webpack.HotModuleReplacementPlugin(),
     new DashboardPlugin()
   )
 }
 
-const mainEntry = [
-  './roots/main'
-]
+const entries = {
+  main: ['./roots/main'],
+  login: ['./roots/login']
+}
 
 /* Secure Webpack Hot reload when we have standalone calls */
 if (process.env.dashboard) {
-  mainEntry.push(
-    `webpack-dev-server/client?http://${config['front-end'].host}:${developmentPort}`,
-    'webpack/hot/only-dev-server'
-  )
+  Object.keys(entries)
+    .forEach((entryName) => entries[entryName].push(
+      `webpack-dev-server/client?http://${config['front-end'].host}:${developmentPort}`,
+      'webpack/hot/only-dev-server'
+    ))
 }
 
 module.exports = {
-  entry: {
-    main: mainEntry
-  },
+  entry: entries,
   output: {
     path: path.resolve('./public'),
     filename: 'assets/js/[name].bundle.js'
@@ -68,7 +68,7 @@ module.exports = {
     }]
   },
 
-  plugins: plugin,
+  plugins: plugins,
 
   devServer: {
     contentBase: './public',
