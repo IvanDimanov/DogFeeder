@@ -1,6 +1,8 @@
 'use strict'
 
+const fs = require('fs')
 const path = require('path')
+const crypto = require('crypto')
 
 const koaRouter = require('koa-router')
 const redis = require('redis')
@@ -25,6 +27,15 @@ bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
 redisClient.on('error', (error) => console.error(`Error while setting Redis with connection ${toString(dbConfig)}: ${toString(error)}`))
+
+const userPasswordSecretsFilePath = path.resolve(__dirname, projectRootPath, 'config/secrets', config.services.auth.userPasswordSecretsFileName)
+let userPasswordSecret
+
+try {
+  userPasswordSecret = fs.readFileSync(userPasswordSecretsFilePath, 'utf-8')
+} catch (error) {
+  throw new ReferenceError(`Unable to read Encryption User Password secret from file "${userPasswordSecretsFilePath}"`)
+}
 
 /*
   Use Google as our internal search engine so we can use the Internet
@@ -88,8 +99,7 @@ const koaRoutes = koaRouter({
     logger.debug('Try to find the exact system Role "great singer" uses for login')
     const singerRole = yield serviceProxy
       .roles
-      .internalGetAllRoles(getAuthorizationHeader({isInternalRequest: true}))
-      .reduce((singerRole, currentRole) => currentRole.internalName === 'guestSinger' ? currentRole : singerRole, {})
+      .internalGetRolesByInternalName(getAuthorizationHeader({isInternalRequest: true}), 'guestSinger')
 
     logger.debug('"Great singer" system Role found:', singerRole)
 
@@ -103,11 +113,11 @@ const koaRoutes = koaRouter({
         .reduce((accumulator, currentValue, currentIndex) => {
           if (currentIndex % 2) {
             accumulator.push(Object.assign(
+              singerData,
               {
                 role: singerRole,
                 level: parseInt(currentValue)
-              },
-              singerData
+              }
             ))
           } else {
             singerData = jsonParseSafe(currentValue) || {}
@@ -121,13 +131,13 @@ const koaRoutes = koaRouter({
 
     /* Be sure no one can Search for the Singer directly */
     /* Converts "Mile Kitic - Kilo Gore Kilo dole"  =>  "- Kilo Gore Kilo dole" */
-    const safeLyrucs = greatSingers
-      .reduce((safeLyrucs, singer) => safeLyrucs.replace(new RegExp(singer.name, 'ig'), ''), lyrics)
+    const safeLyrics = greatSingers
+      .reduce((safeLyrics, singer) => safeLyrics.replace(new RegExp(singer.name, 'ig'), ''), lyrics)
       .replace(/\s+/g, ' ')
       .trim()
 
-    logger.debug('Searching the Web with safe lyrics', safeLyrucs)
-    const webResults = yield searchTheWeb(safeLyrucs)
+    logger.debug('Searching the Web with safe lyrics', safeLyrics)
+    const webResults = yield searchTheWeb(safeLyrics)
     const webResultsString = toString(webResults).toUpperCase()
 
     const foundGreatSinger = greatSingers
@@ -145,7 +155,7 @@ const koaRoutes = koaRouter({
   })
 
   /* Give any user a change to prove he knows a Great Singer hence deserve to login into our system */
-  .post('/singer', function * () {
+  .post('/login-as-singer', function * () {
     const {lyrics} = this.request.body
 
     logger.debug('Try to login as a "great singer" with lyrics:', lyrics)
@@ -172,7 +182,7 @@ const koaRoutes = koaRouter({
         this.status = 404
         this.body = {
           errorCode: 'NoSingerForLyrics',
-          errorMessage: `We coudn't find Great Singer that sing lyrics: ${lyrics}`
+          errorMessage: `We couldn't find Great Singer that sing lyrics: ${lyrics}`
         }
         return
       }
@@ -189,6 +199,91 @@ const koaRoutes = koaRouter({
 
     this.set('Authorization', getAuthorizationHeaderForUser(singer))
     this.body = singer
+  })
+
+  .post('/login', function * () {
+    const {user} = this.request.body
+    logger.info('Attempt to login', user)
+
+    if (!user ||
+        typeof user !== 'object'
+    ) {
+      logger.error('Attempt to login with empty "user" object:', user)
+      this.status = 401
+      this.body = {
+        errorCode: 'UserInputError',
+        errorMessage: 'Invalid User name and/or password'
+      }
+      return
+    }
+
+    if (!user.name ||
+        typeof user.name !== 'string'
+    ) {
+      logger.error('Attempt to login with invalid "user.name":', user)
+      this.status = 401
+      this.body = {
+        errorCode: 'UserInputError',
+        errorMessage: 'Invalid User name and/or password'
+      }
+      return
+    }
+
+    if (!user.password ||
+        typeof user.password !== 'string'
+    ) {
+      logger.error('Attempt to login with invalid "user.password":', user)
+      this.status = 401
+      this.body = {
+        errorCode: 'UserInputError',
+        errorMessage: 'Invalid User name and/or password'
+      }
+      return
+    }
+
+    const encryptedPassword = crypto
+      .createHmac('sha256', userPasswordSecret)
+      .update(user.password)
+      .digest('hex') 
+
+    const userId = yield redisClient
+      .hgetAsync('userAuthToId', `${user.name}/${encryptedPassword}`)
+
+    if (!userId) {
+      logger.error('No Authentication record fond for:', user)
+      this.status = 401
+      this.body = {
+        errorCode: 'UserInputError',
+        errorMessage: 'Invalid User name and/or password'
+      }
+      return
+    }
+
+    const foundUserStringify = yield redisClient.hgetAsync('users', userId)
+    const foundUser = jsonParseSafe(foundUserStringify)
+
+    if (!foundUser) {
+      logger.error('Unable to find used in DB with userId:', userId)
+      this.status = 401
+      this.body = {
+        errorCode: 'UserInputError',
+        errorMessage: 'Invalid User name and/or password'
+      }
+      return
+    }
+
+    /* Just for security */
+    delete foundUser.encryptedPassword
+
+    /**
+     * We need to enrich 'foundUser' object 'role' property
+     * coz it contains only {role: {internalName: '???'}}
+     */
+    foundUser.role = yield serviceProxy
+      .roles
+      .internalGetRolesByInternalName(getAuthorizationHeader({isInternalRequest: true}), foundUser.role.internalName)
+
+    this.body = foundUser
   })
 
 module.exports = koaRoutes
