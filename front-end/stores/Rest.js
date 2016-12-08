@@ -18,10 +18,10 @@ function ajax (options) {
     }
 
     $.ajax(options)
-      .success((data, textStatus, jqXHR) => observer.next({data, textStatus, jqXHR}) || observer.complete())
+      .success((data, textStatus, jqXHR) => observer.next(data, {data, textStatus, jqXHR}) || observer.complete())
       .fail((jqXHR, textStatus, errorThrown) => {
         errorThrown && console.error(errorThrown)
-        observer.error({errorThrown, textStatus, jqXHR})
+        observer.error(jqXHR.responseJSON, {errorThrown, textStatus, jqXHR})
       })
   })
 }

@@ -111,7 +111,7 @@ class Logs extends Component {
     subscriptions[subscriptions.length] = LogsStore
       .getSystemLogs()
       .subscribe({
-        next: ({data}) => this.setState({logs: data}),
+        next: (data) => this.setState({logs: data}),
 
         error: () => this.setState({
           isLoading: false,
@@ -127,7 +127,8 @@ class Logs extends Component {
   }
 
   componentWillUnmount () {
-    subscriptions.map((subscription) => subscription.unsubscribe())
+    let subscription
+    while ((subscription = subscriptions.pop())) subscription.unsubscribe()
   }
 
   render () {
