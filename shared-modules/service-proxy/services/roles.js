@@ -22,6 +22,24 @@ const proxies = {
       }
     })
     .then((response) => response.body)
+  },
+
+  internalGetRolesByInternalName (authorizationHeader, internalName) {
+    return rp({
+      method: 'GET',
+      uri: `${defaultAddress}/api/v1/roles/internal/by-internal-name`,
+      rejectUnauthorized: false,
+      resolveWithFullResponse: true,
+      json: true,
+      headers: {
+        'x-request-id': global.requestId,
+        Authorization: authorizationHeader
+      },
+      qs: {
+        internalName
+      }
+    })
+    .then((response) => response.body)
   }
 }
 

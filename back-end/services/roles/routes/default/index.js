@@ -48,4 +48,46 @@ const koaRoutes = koaRouter({
     this.body = roles
   })
 
+  /* Get complete Role object based on Role internalName */
+  .get('/internal/by-internal-name', koaJwtMiddleware(), function * () {
+    if (!this.state.session.isInternalRequest) {
+      logger.error('Attempt to access internal route with session', this.state.session)
+      this.status = 401
+      this.body = {
+        errorCode: 'InternalUseOnly',
+        errorMessage: 'This route can be used only internally from the system itself'
+      }
+      return
+    }
+
+    const {internalName} = this.query
+    if (!internalName ||
+        typeof internalName !== 'string'
+    ) {
+      this.status = 400
+      this.body = {
+        errorCode: 'InvalidInternalName',
+        errorMessage: `Invalid query property "internalName": "${toString(internalName)}"`
+      }
+      return
+    }
+
+    const roleStringify = yield redisClient
+      .hgetAsync('roles', internalName)
+
+    if (!roleStringify) {
+      this.status = 404
+      this.body = {
+        errorCode: 'RoleByInternalNameNotFound',
+        errorMessage: `Role by "internalName": "${toString(internalName)}" was not found`
+      }
+      return
+    }
+
+    const role = jsonParseSafe(roleStringify)
+
+    logger.debug('Successfully found role', role, 'for internalName', internalName)
+    this.body = role
+  })
+
 module.exports = koaRoutes
