@@ -36,6 +36,7 @@
         "/api/v1/auth"
       ],
       "jwtSecretsFileName": "jwt",
+      "userPasswordSecretsFileName": "user-password",
       "routes": {
         "default": {
           "apiPathPrefix": "/api/v1"
