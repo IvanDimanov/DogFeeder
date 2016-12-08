@@ -80,7 +80,7 @@ redisClient.on('error', (error) => logger.error(`Error while setting Redis with 
 )
 
 .then(() => logger.info('All migrations successfully completed'))
-.catch((error) => logger.error(`Error while executing migrations: ${toString(error)}`))
+.catch((error) => logger.error(`Error while executing migrations: ${error.stack}`))
 
 /* No need to keep the Redis connection open for this module or any other required modules like 'logger' */
 .then(process.exit)

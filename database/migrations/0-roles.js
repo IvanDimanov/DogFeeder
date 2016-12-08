@@ -1,15 +1,26 @@
 'use strict'
 
+const roles = [{
+  internalName: 'admin',
+  uiName: 'admin',
+  permissions: ['canReadProfile', 'canUpdateProfile', 'canReadSystemLogs']
+}, {
+  internalName: 'regularUser',
+  uiName: 'user',
+  permissions: ['canReadProfile', 'canUpdateProfile', 'canReadSystemLogs']
+}, {
+  internalName: 'guestSinger',
+  uiName: 'singer',
+  permissions: []
+}]
+
 async function up (redisClient) {
-  await redisClient.lpushAsync('roles', '{"internalName": "admin"      , "uiName": "admin" , "permissions": ["canReadProfile", "canUpdateProfile", "canReadSystemLogs"]}')
-  await redisClient.lpushAsync('roles', '{"internalName": "regularUser", "uiName": "user"  , "permissions": ["canReadProfile", "canUpdateProfile", "canReadSystemLogs"]}')
-  await redisClient.lpushAsync('roles', '{"internalName": "guestSinger", "uiName": "singer", "permissions": []}')
+  await roles
+    .map((role) => redisClient.hsetAsync('roles', role.internalName, JSON.stringify(role)))
 }
 
 async function down (redisClient) {
-  const totalRoles = await redisClient.llenAsync('roles')
-
-  await redisClient.ltrimAsync('roles', 0, totalRoles)
+  await redisClient.del('roles')
 }
 
 module.exports = {
