@@ -244,7 +244,7 @@ const koaRoutes = koaRouter({
     const encryptedPassword = crypto
       .createHmac('sha256', userPasswordSecret)
       .update(user.password)
-      .digest('hex') 
+      .digest('hex')
 
     const userId = yield redisClient
       .hgetAsync('userAuthToId', `${user.name}/${encryptedPassword}`)
