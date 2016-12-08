@@ -19,3 +19,4 @@ front-end/public/**/*.bundle.*
 # Log files
 **/npm-debug.log*
 back-end/services/auth/logs
+logs
