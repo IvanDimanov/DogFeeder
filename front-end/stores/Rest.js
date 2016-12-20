@@ -1,9 +1,12 @@
-/* global $ __CONFIG__ */
+/* global $ __CONFIG__ sessionStorage */
 'use strict'
 
 import {Observable} from 'rxjs'
 
 const config = __CONFIG__
+
+/* Helps when User reload the page or come from a Login page */
+let AuthorizationHeader = sessionStorage.getItem('AuthorizationHeader') || ''
 
 function ajax (options) {
   return Observable.create((observer) => {
@@ -17,11 +20,39 @@ function ajax (options) {
       options.url = `http://${config['front-end'].host}${port}${options.url}`
     }
 
+    /* Check if we can start using User authorization for every request he makes */
+    if (AuthorizationHeader) {
+      if (!options.headers ||
+          typeof options.headers !== 'object'
+      ) {
+        options.headers = {}
+      }
+
+      options.headers.Authorization = AuthorizationHeader
+
+      /* Let all calls that use '$.ajax()' directly end-up using the same auth headers */
+      $.ajaxSetup({
+        headers: options.headers,
+        cache: false
+      })
+    }
+
     $.ajax(options)
-      .success((data, textStatus, jqXHR) => observer.next(data, {data, textStatus, jqXHR}) || observer.complete())
+      .success((data, textStatus, jqXHR) => {
+        /* Check if the BE wants from us to start using authorization */
+        const newAuthorizationHeader = jqXHR.getResponseHeader('Authorization')
+        if (newAuthorizationHeader) {
+          AuthorizationHeader = newAuthorizationHeader
+          sessionStorage.setItem('AuthorizationHeader', AuthorizationHeader)
+        }
+
+        observer.next({data, textStatus, jqXHR})
+        observer.complete()
+      })
+
       .fail((jqXHR, textStatus, errorThrown) => {
         errorThrown && console.error(errorThrown)
-        observer.error(jqXHR.responseJSON, {errorThrown, textStatus, jqXHR})
+        observer.error({data: jqXHR.responseJSON, errorThrown, textStatus, jqXHR})
       })
   })
 }

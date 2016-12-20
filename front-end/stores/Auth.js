@@ -9,8 +9,17 @@ function login (user) {
   })
 }
 
+function loginAsSinger (lyrics) {
+  return Rest
+    .post({
+      url: 'api/v1/auth/login-as-singer',
+      data: {lyrics}
+    })
+}
+
 const AuthStore = {
-  login
+  login,
+  loginAsSinger
 }
 
 export default AuthStore

@@ -1,4 +1,4 @@
-/* global __CONFIG__ */
+/* global __CONFIG__ sessionStorage */
 'use strict'
 
 import React, {Component} from 'react'
@@ -92,11 +92,33 @@ class Login extends Component {
     this.login = this.login.bind(this)
     this.loginAsSinger = this.loginAsSinger.bind(this)
     this.onEnterKey = this.onEnterKey.bind(this)
+    this.onLoginSuccess = this.onLoginSuccess.bind(this)
+    this.onLoginError = this.onLoginError.bind(this)
   }
 
   componentWillUnmount () {
     let subscription
     while ((subscription = subscriptions.pop())) subscription.unsubscribe()
+  }
+
+  onLoginSuccess ({jqXHR}) {
+    if (!jqXHR.getResponseHeader('Authorization')) {
+      const {errors} = this.state
+      errors.general = 'Unable to get Authorization'
+      this.setState({errors})
+      return
+    }
+
+    window.location.pathname = '/main.html'
+  }
+
+  onLoginError ({data}) {
+    const {errors} = this.state
+    errors.general = data.errorMessage
+    this.setState({
+      errors,
+      isLoading: false
+    })
   }
 
   login () {
@@ -116,39 +138,49 @@ class Login extends Component {
       errors.password = 'User password must contains more than 2 non-space characters'
     }
 
+    this.setState({errors})
     if (errors.name ||
         errors.password
     ) {
-      this.setState({errors})
       return
     }
 
-    this.setState({
-      errors,
-      isLoading: true
-    })
-
+    this.setState({isLoading: true})
     subscriptions[subscriptions.length] = AuthStore
       .login(user)
       .subscribe({
-        next: (data) => console.log(data),
-
-        error: (error) => {
-          const {errors} = this.state
-          errors.general = error.errorMessage
-          this.setState({
-            errors,
-            isLoading: false
-          })
-        },
-
+        next: this.onLoginSuccess,
+        error: this.onLoginError,
         complete: () => this.setState({isLoading: false})
       })
   }
 
   loginAsSinger () {
-    console.log('loginAsSinger()')
-    // subscriptions[subscriptions.length] =
+    const {errors} = this.state
+    let {lyrics} = this.state
+
+    lyrics = String(lyrics).trim()
+
+    errors.general = ''
+    errors.lyrics = ''
+
+    if (lyrics.length < 2) {
+      errors.lyrics = 'Please type more than 2 non-space characters'
+    }
+
+    this.setState({errors})
+    if (errors.lyrics) {
+      return
+    }
+
+    this.setState({isLoading: true})
+    subscriptions[subscriptions.length] = AuthStore
+      .loginAsSinger(lyrics)
+      .subscribe({
+        next: this.onLoginSuccess,
+        error: this.onLoginError,
+        complete: () => this.setState({isLoading: false})
+      })
   }
 
   onEnterKey (callback) {
@@ -228,11 +260,13 @@ class Login extends Component {
             label={'Cancel'}
             primary
             onTouchTap={() => this.setState({isDialogOpened: false})}
+            disabled={isLoading}
           />,
           <FlatButton
             label={'Try'}
             primary
             onTouchTap={this.loginAsSinger}
+            disabled={isLoading}
           />
         ]}
       >
