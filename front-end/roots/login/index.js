@@ -1,4 +1,4 @@
-/* global __CONFIG__ sessionStorage */
+/* global __CONFIG__ */
 'use strict'
 
 import React, {Component} from 'react'
