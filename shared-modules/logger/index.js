@@ -67,6 +67,7 @@ function * koaMiddleware (next) {
     const humanTotalTime = prettyHrtime(end).replace(' ', '')
 
     const errorUuid = uuid()
+    this.status = error.status || 500
     this.body = {
       errorCode: 'InternalServerError',
       errorMessage: 'We are unable to proceed with your request. Please excuse us and try again later.',
