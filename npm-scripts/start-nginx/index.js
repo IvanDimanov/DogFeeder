@@ -16,7 +16,7 @@ const nginxConfigFilePath = path.resolve(__dirname, 'nginx.conf')
 const webServicesNames = Object.keys(config.services)
   .filter((name) => config.services[ name ].publiclyAccessedRoutes.length)
 
-function getLoadBalancerServersTemplate (seviceName, serviceConfig) {
+function getLoadBalancerServersTemplate (serviceName, serviceConfig) {
   function getServers () {
     return Array.from({length: serviceConfig.totalInitialInstances})
       .map((value, instancePort) => `    server ${config['front-end'].host}:${serviceConfig.defaultPort + instancePort};`)
@@ -25,22 +25,24 @@ function getLoadBalancerServersTemplate (seviceName, serviceConfig) {
   }
 
   return `
-  upstream ${seviceName}-balancer {
+  upstream ${serviceName}-balancer {
     least_conn;
 ${getServers()}
   }`
 }
 
-function getLoadBalancerLocationTemplates (seviceName, serviceConfig) {
+function getLoadBalancerLocationTemplates (serviceName, serviceConfig) {
   function getLocation (route) {
     return `
     location ~ ^${route}(.*)$ {
+      add_header 'Access-Control-Expose-Headers' 'Authorization' always;
+
       if ($args) {
-        proxy_pass http://${seviceName}-balancer$uri?$args;
+        proxy_pass http://${serviceName}-balancer$uri?$args;
       }
 
       if ($args = '') {
-        proxy_pass http://${seviceName}-balancer$uri;
+        proxy_pass http://${serviceName}-balancer$uri;
       }
     }`
   }
@@ -72,7 +74,7 @@ http {
 
   # List of servers that will handle the microService
 ${webServicesNames
-  .map((seviceName) => getLoadBalancerServersTemplate(seviceName, config.services[seviceName]))
+  .map((serviceName) => getLoadBalancerServersTemplate(serviceName, config.services[serviceName]))
   .join(`
   `)
 }
@@ -90,7 +92,7 @@ ${webServicesNames
 
     # Redirect to load-balancer
 ${webServicesNames
-  .map((seviceName) => getLoadBalancerLocationTemplates(seviceName, config.services[seviceName]))
+  .map((serviceName) => getLoadBalancerLocationTemplates(serviceName, config.services[serviceName]))
   .join(`
   `)
 }
