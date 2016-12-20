@@ -80,7 +80,7 @@ const koaRoutes = koaRouter({
       return
     }
 
-    const {lyrics} = this.query
+    let {lyrics} = this.query
 
     logger.debug('Try to find "great singer" for lyrics:', lyrics)
 
@@ -92,6 +92,17 @@ const koaRoutes = koaRouter({
       this.body = {
         errorCode: 'UserInputError',
         errorMessage: 'Invalid "lyrics" parameter'
+      }
+      return
+    }
+
+    lyrics = lyrics.trim()
+    if (lyrics.length < 3) {
+      logger.error('"lyrics" too short')
+      this.status = 400
+      this.body = {
+        errorCode: 'UserInputTooShortError',
+        errorMessage: '"lyrics" parameter must be more than 2 non-space characters'
       }
       return
     }
@@ -283,6 +294,9 @@ const koaRoutes = koaRouter({
       .roles
       .internalGetRolesByInternalName(getAuthorizationHeader({isInternalRequest: true}), foundUser.role.internalName)
 
+    logger.debug('Login as User', foundUser)
+
+    this.set('Authorization', getAuthorizationHeaderForUser(foundUser))
     this.body = foundUser
   })
 
