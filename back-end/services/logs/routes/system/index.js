@@ -9,6 +9,7 @@ const bluebird = require('bluebird')
 const projectRootPath = '../../../../../'
 const config = require(`${projectRootPath}/config`)
 const logger = require(`${projectRootPath}/shared-modules/logger`)
+const {koaJwtMiddleware} = require(`${projectRootPath}/shared-modules/session`)
 const {toString, jsonParseSafe} = require(`${projectRootPath}/shared-modules/utils`)
 
 const routeName = path.parse(__dirname).name
@@ -27,7 +28,7 @@ const koaRoutes = koaRouter({
   /* Resolves to /api/v1/logs/system */
   prefix: urlPrefix
 })
-  .get('/', function * () {
+  .get('/', koaJwtMiddleware(), function * () {
     // logger.debug('Getting System logs')
 
     const logs = yield redisClient
