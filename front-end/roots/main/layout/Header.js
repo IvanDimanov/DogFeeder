@@ -3,6 +3,8 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router'
 
+import Auth from '../../../stores/Auth'
+
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
 import MenuItem from 'material-ui/MenuItem'
@@ -11,7 +13,7 @@ import HomeIcon from 'material-ui/svg-icons/action/home'
 import ProfileIcon from 'material-ui/svg-icons/action/face'
 import LogsIcon from 'material-ui/svg-icons/action/assessment'
 import ExposureIcon from 'material-ui/svg-icons/image/exposure'
-import SearchIcon from 'material-ui/svg-icons/action/search'
+import LogoutIcon from 'material-ui/svg-icons/action/power-settings-new'
 
 const style = {
   link: {
@@ -83,11 +85,10 @@ class Header extends Component {
         </Link>
 
         <Link
-          to={'/wiki-search'}
-          onTouchTap={this.toggleOpen}
+          onTouchTap={Auth.logout}
           style={style.link}
         >
-          <MenuItem leftIcon={<SearchIcon />}>WikiSearch</MenuItem>
+          <MenuItem leftIcon={<LogoutIcon />}>Logout</MenuItem>
         </Link>
       </Drawer>
     </div>

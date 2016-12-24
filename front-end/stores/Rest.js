@@ -56,7 +56,7 @@ function ajax (options) {
 
       .fail((jqXHR, textStatus, errorThrown) => {
         errorThrown && console.error(errorThrown)
-        observer.error({data: jqXHR.responseJSON, errorThrown, textStatus, jqXHR})
+        observer.error({data: jqXHR.responseJSON || {errorMessage: 'AJAX Error'}, errorThrown, textStatus, jqXHR})
       })
   })
 }

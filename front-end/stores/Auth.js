@@ -1,3 +1,4 @@
+/* global $ __CONFIG__ sessionStorage */
 'use strict'
 
 import Rest from './Rest'
@@ -17,9 +18,15 @@ function loginAsSinger (lyrics) {
     })
 }
 
+function logout () {
+  sessionStorage.removeItem('AuthorizationHeader')
+  window.location.pathname = '/login.html'
+}
+
 const AuthStore = {
   login,
-  loginAsSinger
+  loginAsSinger,
+  logout
 }
 
 export default AuthStore

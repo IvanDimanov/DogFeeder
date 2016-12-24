@@ -112,7 +112,7 @@ class Login extends Component {
     window.location.pathname = '/main.html'
   }
 
-  onLoginError ({data}) {
+  onLoginError ({data, errorThrown, textStatus, jqXHR}) {
     const {errors} = this.state
     errors.general = data.errorMessage
     this.setState({
