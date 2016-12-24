@@ -8,6 +8,10 @@ const config = __CONFIG__
 /* Helps when User reload the page or come from a Login page */
 let AuthorizationHeader = sessionStorage.getItem('AuthorizationHeader') || ''
 
+function getAuthorizationHeader () {
+  return AuthorizationHeader
+}
+
 function ajax (options) {
   return Observable.create((observer) => {
     /* If the App is been developed separately (on a different port) we need to make sue that we still use the default FE gateway */
@@ -92,6 +96,7 @@ function post (arg) {
 }
 
 const Rest = {
+  getAuthorizationHeader,
   ajax,
   get,
   post
