@@ -1,4 +1,4 @@
-/* global $ __CONFIG__ sessionStorage */
+/* global sessionStorage */
 'use strict'
 
 import Rest from './Rest'
