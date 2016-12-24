@@ -28,7 +28,7 @@ const koaRoutes = koaRouter({
   /* Resolves to /api/v1/roles */
   prefix: urlPrefix
 })
-  /* Let the any system microService know which are the exact roles in use */
+  /* Let any system microService know which are the exact roles in use */
   .get('/internal', koaJwtMiddleware(), function * () {
     if (!this.state.session.isInternalRequest) {
       logger.error('Attempt to access internal route with session', this.state.session)
@@ -87,6 +87,13 @@ const koaRoutes = koaRouter({
     const role = jsonParseSafe(roleStringify)
 
     logger.debug('Successfully found role', role, 'for internalName', internalName)
+    this.body = role
+  })
+
+  /* Logged-in user role: name, permissions, etc. */
+  .get('/mine', koaJwtMiddleware(), function * () {
+    const {name, role} = this.state.session
+    logger.info('Return roles for user', name)
     this.body = role
   })
 
