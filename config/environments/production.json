@@ -36,6 +36,7 @@
         "/api/v1/auth"
       ],
       "jwtSecretsFileName": "jwt",
+      "maxTokenLifeTimestamp": 259200000,
       "userPasswordSecretsFileName": "user-password",
       "routes": {
         "default": {

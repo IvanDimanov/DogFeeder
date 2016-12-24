@@ -70,7 +70,7 @@ function * koaMiddleware (next) {
     this.status = error.status || 500
     this.body = {
       errorCode: 'InternalServerError',
-      errorMessage: 'We are unable to proceed with your request. Please excuse us and try again later.',
+      errorMessage: error.message || 'We are unable to proceed with your request. Please excuse us and try again later.',
       errorUuid
     }
 
