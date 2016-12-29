@@ -92,7 +92,7 @@ const koaRoutes = koaRouter({
 
   /* Logged-in user role: name, permissions, etc. */
   .get('/mine', koaJwtMiddleware(), function * () {
-    const {name, role} = this.state.session
+    const {user: {name, role}} = this.state.session
     logger.info('Return roles for user', name)
     this.body = role
   })

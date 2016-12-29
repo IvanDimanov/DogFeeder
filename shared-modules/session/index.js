@@ -31,8 +31,11 @@ function getAuthorizationHeader (data) {
 
 function getAuthorizationHeaderForUser (user) {
   return getAuthorizationHeader({
-    name: user.name,
-    role: user.role,
+    user: {
+      id: user.id,
+      name: user.name,
+      role: user.role
+    },
     exp: Math.round((Date.now() + config.services.auth.maxTokenLifeTimestamp) / 1000)
   })
 }

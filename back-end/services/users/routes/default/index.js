@@ -31,9 +31,26 @@ const koaRoutes = koaRouter({
 })
   /* Logged-in user: name, role, permissions, etc. */
   .get('/mine', koaJwtMiddleware(), function * () {
-    const user = this.state.session
-    logger.info('Return User', user)
-    this.body = user
+    const {user} = this.state.session
+
+    const foundUser = yield serviceProxy
+      .users
+      .internalGetUserById(getAuthorizationHeader({isInternalRequest: true}), user.id)
+      .catch(() => undefined)
+
+    if (!foundUser) {
+      logger.error('Unable to find used in DB with userId:', user.Id)
+      this.status = 404
+      this.body = {
+        errorCode: 'UserNotFound',
+        errorMessage: `Unable to get User with ID "${user.Id}"`
+      }
+      return
+    }
+
+    logger.debug('Return login User', foundUser)
+
+    this.body = foundUser
   })
 
   /* Let internal system calls get full user info for known user ID */
