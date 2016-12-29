@@ -1,7 +1,7 @@
 {
   "front-end": {
     "protocol": "http",
-    "host": "localhost",
+    "host": "127.0.0.1",
     "port": 8000,
     "successMessageAutoHideDuration": 3000
   },
@@ -15,7 +15,7 @@
 
   "services": {
     "logs": {
-      "host": "localhost",
+      "host": "127.0.0.1",
       "defaultPort": 3100,
       "totalInitialInstances": 1,
       "publiclyAccessedRoutes": [
@@ -29,7 +29,7 @@
     },
 
     "auth": {
-      "host": "localhost",
+      "host": "127.0.0.1",
       "defaultPort": 3200,
       "totalInitialInstances": 1,
       "publiclyAccessedRoutes": [
@@ -46,11 +46,25 @@
     },
 
     "roles": {
-      "host": "localhost",
+      "host": "127.0.0.1",
       "defaultPort": 3300,
       "totalInitialInstances": 1,
       "publiclyAccessedRoutes": [
         "/api/v1/roles"
+      ],
+      "routes": {
+        "default": {
+          "apiPathPrefix": "/api/v1"
+        }
+      }
+    },
+
+    "users": {
+      "host": "127.0.0.1",
+      "defaultPort": 3400,
+      "totalInitialInstances": 1,
+      "publiclyAccessedRoutes": [
+        "/api/v1/users"
       ],
       "routes": {
         "default": {

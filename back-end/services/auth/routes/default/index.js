@@ -270,8 +270,10 @@ const koaRoutes = koaRouter({
       return
     }
 
-    const foundUserStringify = yield redisClient.hgetAsync('users', userId)
-    const foundUser = jsonParseSafe(foundUserStringify)
+    const foundUser = yield serviceProxy
+      .users
+      .internalGetUserById(getAuthorizationHeader({isInternalRequest: true}), userId)
+      .catch(() => undefined)
 
     if (!foundUser) {
       logger.error('Unable to find used in DB with userId:', userId)
@@ -282,17 +284,6 @@ const koaRoutes = koaRouter({
       }
       return
     }
-
-    /* Just for security */
-    delete foundUser.encryptedPassword
-
-    /**
-     * We need to enrich 'foundUser' object 'role' property
-     * coz it contains only {role: {internalName: '???'}}
-     */
-    foundUser.role = yield serviceProxy
-      .roles
-      .internalGetRolesByInternalName(getAuthorizationHeader({isInternalRequest: true}), foundUser.role.internalName)
 
     logger.debug('Login as User', foundUser)
 
