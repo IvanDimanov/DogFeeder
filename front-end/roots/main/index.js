@@ -18,16 +18,16 @@ injectTapEventPlugin()
 import Layout from './layout'
 import NotFound from '../../components/NotFound'
 
-import Rest from '../../stores/Rest'
-import Auth from '../../stores/Auth'
+import RestStore from '../../stores/RestStore'
+import AuthStore from '../../stores/AuthStore'
 
 import Home from '../../components/Home'
 import Profile from '../../components/Profile'
 import Logs from '../../components/Logs'
 
 /* Page available only for authorized users */
-if (!Rest.getAuthorizationHeader()) {
-  Auth.logout()
+if (!RestStore.getAuthorizationHeader()) {
+  AuthStore.logout()
 }
 
 render((

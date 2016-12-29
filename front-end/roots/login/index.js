@@ -7,7 +7,7 @@ import {render} from 'react-dom'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
-import AuthStore from '../../stores/Auth'
+import AuthStore from '../../stores/AuthStore'
 
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'

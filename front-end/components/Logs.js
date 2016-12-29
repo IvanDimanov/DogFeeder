@@ -3,7 +3,7 @@
 
 import React, {Component} from 'react'
 
-import LogsStore from '../stores/Logs'
+import LogsStore from '../stores/LogsStore'
 
 import Paper from 'material-ui/Paper'
 import Subheader from 'material-ui/Subheader'

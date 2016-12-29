@@ -3,7 +3,7 @@
 import React, {Component} from 'react'
 import {Link} from 'react-router'
 
-import Auth from '../../../stores/Auth'
+import AuthStore from '../../../stores/AuthStore'
 
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
@@ -85,7 +85,7 @@ class Header extends Component {
         </Link>
 
         <Link
-          onTouchTap={Auth.logout}
+          onTouchTap={AuthStore.logout}
           style={style.link}
         >
           <MenuItem leftIcon={<LogoutIcon />}>Logout</MenuItem>

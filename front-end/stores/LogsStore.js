@@ -1,9 +1,9 @@
 'use strict'
 
-import Rest from './Rest'
+import RestStore from './RestStore'
 
 function getSystemLogs () {
-  return Rest.get('/api/v1/logs/system')
+  return RestStore.get('/api/v1/logs/system')
 }
 
 const LogsStore = {

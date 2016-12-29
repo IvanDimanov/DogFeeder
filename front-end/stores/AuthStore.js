@@ -1,17 +1,18 @@
 /* global sessionStorage */
 'use strict'
 
-import Rest from './Rest'
+import RestStore from './RestStore'
 
 function login (user) {
-  return Rest.post({
-    url: '/api/v1/auth/login',
-    data: {user}
-  })
+  return RestStore
+    .post({
+      url: '/api/v1/auth/login',
+      data: {user}
+    })
 }
 
 function loginAsSinger (lyrics) {
-  return Rest
+  return RestStore
     .post({
       url: 'api/v1/auth/login-as-singer',
       data: {lyrics}
