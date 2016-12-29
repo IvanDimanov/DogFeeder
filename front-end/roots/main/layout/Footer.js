@@ -8,7 +8,7 @@ import RestoreIcon from 'material-ui/svg-icons/action/restore'
 import FavoriteIcon from 'material-ui/svg-icons/action/favorite'
 import IconLocationOn from 'material-ui/svg-icons/communication/location-on'
 
-const recentsIcon = <RestoreIcon />
+const recentIcon = <RestoreIcon />
 const favoriteIcon = <FavoriteIcon />
 const nearbyIcon = <IconLocationOn />
 
@@ -26,8 +26,8 @@ class Footer extends Component {
     return <Paper zDepth={1} style={{marginTop: 'auto'}}>
       <BottomNavigation selectedIndex={selectedIndex}>
         <BottomNavigationItem
-          label='Recents'
-          icon={recentsIcon}
+          label='Recent'
+          icon={recentIcon}
           onTouchTap={() => this.setState({selectedIndex: 0})}
         />
         <BottomNavigationItem
