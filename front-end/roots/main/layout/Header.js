@@ -2,8 +2,10 @@
 
 import React, {Component} from 'react'
 import {Link} from 'react-router'
+import {observer} from 'mobx-react'
 
 import AuthStore from '../../../stores/AuthStore'
+import UserStore from '../../../stores/UserStore'
 
 import AppBar from 'material-ui/AppBar'
 import Drawer from 'material-ui/Drawer'
@@ -22,7 +24,7 @@ const style = {
   }
 }
 
-class Header extends Component {
+const Header = observer(class Header extends Component {
   constructor (props) {
     super(props)
 
@@ -43,7 +45,7 @@ class Header extends Component {
 
     return <div>
       <AppBar
-        title='Welcome {User}'
+        title={`Welcome ${UserStore.user.name}`}
         onLeftIconButtonTouchTap={this.toggleOpen}
       />
 
@@ -93,6 +95,6 @@ class Header extends Component {
       </Drawer>
     </div>
   }
-}
+})
 
 export default Header

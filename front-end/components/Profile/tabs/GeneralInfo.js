@@ -2,6 +2,9 @@
 'use strict'
 
 import React, {Component} from 'react'
+import {observer} from 'mobx-react'
+
+import UserStore from '../../../stores/UserStore'
 
 import TextField from 'material-ui/TextField'
 import Toggle from 'material-ui/Toggle'
@@ -20,35 +23,15 @@ import profileStyles from '../styles'
 
 const config = __CONFIG__
 
-const titles = {
-  male: [
-    'Mr.',
-    'Sir',
-    'Ing.',
-    'Mr.Ing.',
-    'Super Mr.Phd.Ing.',
-    'Бай онзи',
-    'Млад Меринджей'
-  ],
-  female: [
-    'Miss',
-    'Madam',
-    'Madam Ing.',
-    'Принцеса',
-    'Нейно Величество',
-    'Робиня',
-    'Ама най най'
-  ]
-}
-
-class GeneralInfo extends Component {
+const GeneralInfo = observer(class GeneralInfo extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
       name: '',
-      sex: 'male',
-      title: titles.male[0],
+      sex: '',
+      title: '',
+
       isLoading: false,
       successMessage: '',
       errors: {
@@ -76,12 +59,12 @@ class GeneralInfo extends Component {
   }
 
   toggleSex () {
-    let {sex} = this.state
+    let sex = this.state.sex || UserStore.user.sex
     sex = sex === 'male' ? 'female' : 'male'
 
     this.setState({
       sex,
-      title: titles[sex][0]
+      title: UserStore.titles[sex][0]
     })
   }
 
@@ -103,10 +86,14 @@ class GeneralInfo extends Component {
   }
 
   render () {
-    const {name, sex, title, isLoading, successMessage, errors} = this.state
+    const {isLoading, successMessage, errors} = this.state
+
+    const name = this.state.name || UserStore.user.name
+    const sex = this.state.sex || UserStore.user.sex
+    const title = this.state.title || UserStore.user.title
 
     const toggleSexStyles = profileStyles.toggle[sex]
-    const sexTitles = titles[sex]
+    const sexTitles = UserStore.titles[sex]
 
     return <div>
       <div style={{marginTop: 60}}>
@@ -167,6 +154,6 @@ class GeneralInfo extends Component {
       />
     </div>
   }
-}
+})
 
 export default GeneralInfo
