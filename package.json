@@ -32,6 +32,7 @@
   "standard": {
     "ignore": [
       "notes",
+      "shared-modules/utils/index.js",
       "front-end/shared/utils.js"
     ]
   },
