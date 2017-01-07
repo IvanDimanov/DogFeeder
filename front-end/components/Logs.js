@@ -219,6 +219,7 @@ const Logs = observer(class Logs extends Component {
                 <DropDownMenu
                   value={LogsStore.maxResultsPerPage}
                   onChange={(event, index, value) => this.sync(LogsStore.currentPage, value)}
+                  disabled={isLoading}
                 >
                   {LogsStore.validMaxResultsPerPage.map((maxResultsPerPage, index) => <MenuItem key={index} value={maxResultsPerPage} primaryText={maxResultsPerPage} />)}
                 </DropDownMenu>
