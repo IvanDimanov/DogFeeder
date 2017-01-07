@@ -6,7 +6,6 @@ import {observer} from 'mobx-react'
 
 import UserStore from '../../../stores/UserStore'
 
-import TextField from 'material-ui/TextField'
 import Toggle from 'material-ui/Toggle'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
