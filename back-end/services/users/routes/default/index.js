@@ -33,6 +33,13 @@ const koaRoutes = koaRouter({
   .get('/mine', koaJwtMiddleware(), function * () {
     const {user} = this.state.session
 
+    if (user.role.internalName === 'guestSinger') {
+      logger.debug('Return default guest', user)
+
+      this.body = user
+      return
+    }
+
     const foundUser = yield serviceProxy
       .users
       .internalGetUserById(getAuthorizationHeader({isInternalRequest: true}), user.id)
