@@ -11,7 +11,7 @@ const config = require(`${projectRootPath}/config`)
 const logger = require(`${projectRootPath}/shared-modules/logger`)
 const serviceProxy = require(`${projectRootPath}/shared-modules/service-proxy`)
 const {koaJwtMiddleware, getAuthorizationHeader} = require(`${projectRootPath}/shared-modules/session`)
-const {toString, getInstance, jsonParseSafe} = require(`${projectRootPath}/shared-modules/utils`)
+const {toString, jsonParseSafe} = require(`${projectRootPath}/shared-modules/utils`)
 
 const routeName = path.parse(__dirname).name
 const apiPrefix = config.services[global.serviceName].routes[routeName].apiPathPrefix
@@ -60,7 +60,7 @@ const koaRoutes = koaRouter({
     this.body = foundUser
   })
 
-  /* Update logged-in user: name, sex, title */
+  /* Update logged-in user: sex, title */
   .post('/mine', koaJwtMiddleware(), function * () {
     const {user: sessionUser} = this.state.session
 
@@ -114,6 +114,120 @@ const koaRoutes = koaRouter({
     foundUser.title = updateUser.title
 
     yield redisClient.hsetAsync('users', sessionUser.id, JSON.stringify(foundUser))
+
+    this.body = foundUser
+  })
+
+  /* Update logged-in user: password */
+  .post('/mine/password', koaJwtMiddleware(), function * () {
+    const {user} = this.state.session
+
+    if (!~user.role.permissions.indexOf('canUpdatePassword')) {
+      logger.error(`Permission "canUpdatePassword" not found in`, user.role.permissions)
+      this.status = 403
+      this.body = {
+        errorCode: 'NoUpdatePermission',
+        errorMessage: 'You have no permission to update your password'
+      }
+      return
+    }
+
+    function getPasswordStrongLevel (password) {
+      password = String(password)
+
+      let level = 0
+      const labels = [
+        '',
+        'Lame',
+        'Silly',
+        'You can do better',
+        'Now we`re talking',
+        'That`s good enough',
+        'Добре си вече, стига',
+        'Ей програмистче малко',
+        'Ти сигурен ли си, че ще я запомниш',
+        'СУПЕР МАРИО!',
+        'Евала - признах тъ',
+        'СПАРТААААА!',
+        'За кракта ти безкрайни...',
+        '... 6! 6! 6!'
+      ]
+
+      const styles = [
+        {},
+        {color: 'green'},
+        {color: 'green'},
+        {color: 'lime'},
+        {color: 'lime'},
+        {color: 'yellow'},
+        {color: 'yellow'},
+        {color: 'orange', fontWeight: 'bold'},
+        {color: 'orange', fontWeight: 'bolder'},
+        {color: 'red', fontWeight: 'bolder'},
+        {color: 'red', fontWeight: 'bolder'},
+        {color: 'red', fontWeight: 'bolder'},
+        {color: 'red', fontWeight: 'bolder'},
+        {color: 'red', fontWeight: 'bolder'}
+      ]
+
+      if (password.length > 0) level++
+      if (password.length > 5) level++
+      if (password.length > 10) level++
+      if (password.length > 15) level++
+      if (password.length > 20) level++
+
+      if (password.match(/[0-9]/)) level++
+      if (password.match(/[a-z]/)) level++
+      if (password.match(/[A-Z]/)) level++
+
+      if (password.match(/[!@#$%\^]/)) level++
+      if (password.match(/[&\*\(\)_\+\-=]/)) level++
+      if (password.match(/[/\\]/)) level++
+      if (password.match(/[\[\]\{\}]/)) level++
+      if (password.match(/[';|\.,]/)) level++
+
+      return {
+        level,
+        label: labels[level],
+        style: styles[level]
+      }
+    }
+
+    const {password} = this.request.body
+
+    if (getPasswordStrongLevel(password).level < 4) {
+      this.status = 400
+      this.body = {
+        errorCode: 'InvalidPassword',
+        errorMessage: 'Please type a stronger Password'
+      }
+      return
+    }
+
+    const encryptedPassword = yield serviceProxy
+      .auth
+      .internalEncrypt(getAuthorizationHeader({isInternalRequest: true}), password)
+      .then((response) => response.encryptedText)
+
+    const foundUserStringify = yield redisClient.hgetAsync('users', user.id)
+    const foundUser = jsonParseSafe(foundUserStringify)
+
+    if (!foundUser) {
+      logger.error('Unable to find used in DB with userId:', user.id)
+      this.status = 404
+      this.body = {
+        errorCode: 'UserNotFound',
+        errorMessage: `User with userId "${user.id}" is not found`
+      }
+      return
+    }
+
+    /* Recreate new User/Password relation */
+    yield redisClient.hdelAsync('userAuthToId', `${foundUser.name}/${foundUser.encryptedPassword}`)
+    yield redisClient.hsetAsync('userAuthToId', `${foundUser.name}/${encryptedPassword}`, foundUser.id)
+
+    foundUser.encryptedPassword = encryptedPassword
+    yield redisClient.hsetAsync('users', foundUser.id, JSON.stringify(foundUser))
 
     this.body = foundUser
   })
