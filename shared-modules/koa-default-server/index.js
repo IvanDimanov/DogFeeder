@@ -23,8 +23,11 @@ global.instanceId = instancePort
 
 const app = koa()
 
+if (config.trackRoutesLogs) {
+  app.use(logger.koaMiddleware)
+}
+
 app
-  .use(logger.koaMiddleware)
   .use(koaBody())
 
 /* Boost the Local development by letting any FE application use this BackEnd */
