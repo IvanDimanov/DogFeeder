@@ -248,7 +248,7 @@ const koaRoutes = koaRouter({
 
   .post('/login', function * () {
     const {user} = this.request.body
-    logger.info('Attempt to login', user)
+    logger.info('Attempt to login', user.name)
 
     if (!user ||
         typeof user !== 'object'
