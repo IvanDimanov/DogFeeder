@@ -45,7 +45,7 @@ const Header = observer(class Header extends Component {
 
     return <div>
       <AppBar
-        title={`Welcome ${UserStore.user.name}`}
+        title={`Welcome, ${UserStore.user.title} ${UserStore.user.name}`}
         onLeftIconButtonTouchTap={this.toggleOpen}
       />
 
