@@ -11,7 +11,7 @@ const config = require(`${projectRootPath}/config`)
 const logger = require(`${projectRootPath}/shared-modules/logger`)
 const serviceProxy = require(`${projectRootPath}/shared-modules/service-proxy`)
 const {koaJwtMiddleware, getAuthorizationHeader} = require(`${projectRootPath}/shared-modules/session`)
-const {toString, jsonParseSafe} = require(`${projectRootPath}/shared-modules/utils`)
+const {toString, getInstance, jsonParseSafe} = require(`${projectRootPath}/shared-modules/utils`)
 
 const routeName = path.parse(__dirname).name
 const apiPrefix = config.services[global.serviceName].routes[routeName].apiPathPrefix
@@ -56,6 +56,64 @@ const koaRoutes = koaRouter({
     }
 
     logger.debug('Return login User', foundUser)
+
+    this.body = foundUser
+  })
+
+  /* Update logged-in user: name, sex, title */
+  .post('/mine', koaJwtMiddleware(), function * () {
+    const {user: sessionUser} = this.state.session
+
+    if (!~sessionUser.role.permissions.indexOf('canUpdateProfile')) {
+      logger.error(`Permission "canUpdateProfile" not found in`, sessionUser.role.permissions)
+      this.status = 403
+      this.body = {
+        errorCode: 'NoUpdatePermission',
+        errorMessage: 'You have no permission to update your profile'
+      }
+      return
+    }
+
+    const foundUserStringify = yield redisClient.hgetAsync('users', sessionUser.id)
+    const foundUser = jsonParseSafe(foundUserStringify)
+    delete foundUser.encryptedPassword
+
+    if (!foundUser) {
+      logger.error('Unable to find used in DB with userId:', sessionUser.id)
+      this.status = 404
+      this.body = {
+        errorCode: 'UserNotFound',
+        errorMessage: `User with userId "${sessionUser.id}" is not found`
+      }
+      return
+    }
+
+    const {user: updateUser} = this.request.body
+
+    const validSexes = ['male', 'female']
+    if (!~validSexes.indexOf(updateUser.sex)) {
+      this.status = 400
+      this.body = {
+        errorCode: 'InvalidUserSex',
+        errorMessage: `"${toString(updateUser.sex)}" is not one of ${toString(validSexes)}`
+      }
+      return
+    }
+
+    updateUser.title = String(updateUser.title).trim()
+    if (updateUser.title.replace(/[^a-zA-Z]/g, '').length < 2) {
+      this.status = 400
+      this.body = {
+        errorCode: 'InvalidUserTitle',
+        errorMessage: 'Title must have more than 2 letters'
+      }
+      return
+    }
+
+    foundUser.sex = updateUser.sex
+    foundUser.title = updateUser.title
+
+    yield redisClient.hsetAsync('users', sessionUser.id, JSON.stringify(foundUser))
 
     this.body = foundUser
   })
