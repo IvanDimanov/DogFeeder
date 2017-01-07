@@ -14,7 +14,6 @@ import FlatButton from 'material-ui/FlatButton'
 import CircularProgress from 'material-ui/CircularProgress'
 import Snackbar from 'material-ui/Snackbar'
 
-import NameIcon from 'material-ui/svg-icons/social/person'
 import SexIcon from 'material-ui/svg-icons/notification/wc'
 import TitleIcon from 'material-ui/svg-icons/action/record-voice-over'
 
@@ -23,12 +22,13 @@ import profileStyles from '../styles'
 
 const config = __CONFIG__
 
+const subscriptions = []
+
 const GeneralInfo = observer(class GeneralInfo extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      name: '',
       sex: '',
       title: '',
 
@@ -36,35 +36,31 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
       successMessage: '',
       errors: {
         general: [],
-        name: '',
+        sex: '',
         title: ''
       }
     }
 
     this.save = this.save.bind(this)
-    this.onNameChange = this.onNameChange.bind(this)
     this.toggleSex = this.toggleSex.bind(this)
   }
 
-  onNameChange (event) {
-    const {errors} = this.state
-    const name = String(event.target.value).trim()
-
-    errors.name = name.replace(/[^a-zA-Z]/g, '').length < 3 ? 'Name must have more than 3 letters' : ''
-
-    this.setState({
-      name,
-      errors
-    })
+  componentWillUnmount () {
+    let subscription
+    while ((subscription = subscriptions.pop())) subscription.unsubscribe()
   }
 
   toggleSex () {
+    const {errors} = this.state
+    errors.sex = ''
+
     let sex = this.state.sex || UserStore.user.sex
     sex = sex === 'male' ? 'female' : 'male'
 
     this.setState({
       sex,
-      title: UserStore.titles[sex][0]
+      title: UserStore.titles[sex][0],
+      errors
     })
   }
 
@@ -77,18 +73,41 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
       errors
     })
 
-    setTimeout(() => {
-      this.setState({
-        isLoading: false,
-        successMessage: 'Profile saved'
+    const sex = this.state.sex || UserStore.user.sex
+    const title = this.state.title || UserStore.user.title
+
+    subscriptions[subscriptions.length] = UserStore
+      .setUser({sex, title})
+      .subscribe({
+        error: ({data}) => {
+          const {errors} = this.state
+
+          switch (data.errorCode) {
+            case 'InvalidUserSex':
+              errors.sex = data.errorMessage
+              break
+
+            case 'InvalidUserTitle':
+              errors.title = data.errorMessage
+              break
+
+            default:
+              errors.general = [data.errorMessage]
+          }
+
+          this.setState({
+            isLoading: false,
+            errors
+          })
+        },
+
+        complete: () => this.setState({isLoading: false})
       })
-    }, 1000)
   }
 
   render () {
     const {isLoading, successMessage, errors} = this.state
 
-    const name = this.state.name || UserStore.user.name
     const sex = this.state.sex || UserStore.user.sex
     const title = this.state.title || UserStore.user.title
 
@@ -106,6 +125,7 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
           style={profileStyles.toggle.default}
           disabled={isLoading}
         />
+        <small style={{color: 'red'}}>{errors.sex}</small>
       </div>
 
       <div style={profileStyles.fieldGroup}>
@@ -113,7 +133,15 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
         <SelectField
           floatingLabelText='Title'
           value={title}
-          onChange={(event, index, value) => this.setState({title: value})}
+          onChange={(event, index, value) => {
+            const {errors} = this.state
+            errors.title = ''
+
+            this.setState({
+              title: value,
+              errors
+            })
+          }}
           disabled={isLoading}
           errorText={errors.title}
         >
@@ -121,23 +149,12 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
         </SelectField>
       </div>
 
-      <div style={profileStyles.fieldGroup}>
-        <NameIcon style={profileStyles.icon} />
-        <TextField
-          floatingLabelText='Name'
-          value={name}
-          onChange={this.onNameChange}
-          disabled={isLoading}
-          errorText={errors.name}
-        />
-      </div>
-
       <div style={profileStyles.saveGroup.wrapper}>
         {!isLoading &&
           <FlatButton
             label='Save'
             onTouchTap={this.save}
-            disabled={Boolean(errors.name || errors.title)}
+            disabled={Boolean(errors.sex || errors.title)}
           />
         }
 
