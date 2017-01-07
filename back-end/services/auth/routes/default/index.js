@@ -212,6 +212,40 @@ const koaRoutes = koaRouter({
     this.body = singer
   })
 
+  /* Used for common password encryption */
+  .get('/internal/encrypt', koaJwtMiddleware(), function * () {
+    if (!this.state.session.isInternalRequest) {
+      logger.error('Attempt to access internal route with session', this.state.session)
+      this.status = 401
+      this.body = {
+        errorCode: 'InternalUseOnly',
+        errorMessage: 'This route can be used only internally from the system itself'
+      }
+      return
+    }
+
+    let {text} = this.query
+
+    if (!text ||
+        typeof text !== 'string'
+    ) {
+      logger.error('Invalid "text" parameter')
+      this.status = 400
+      this.body = {
+        errorCode: 'UserInputError',
+        errorMessage: 'Invalid "text" parameter'
+      }
+      return
+    }
+
+    const encryptedText = crypto
+      .createHmac('sha256', userPasswordSecret)
+      .update(text)
+      .digest('hex')
+
+    this.body = {encryptedText}
+  })
+
   .post('/login', function * () {
     const {user} = this.request.body
     logger.info('Attempt to login', user)
@@ -252,10 +286,10 @@ const koaRoutes = koaRouter({
       return
     }
 
-    const encryptedPassword = crypto
-      .createHmac('sha256', userPasswordSecret)
-      .update(user.password)
-      .digest('hex')
+    const encryptedPassword = yield serviceProxy
+      .auth
+      .internalEncrypt(getAuthorizationHeader({isInternalRequest: true}), user.password)
+      .then((response) => response.encryptedText)
 
     const userId = yield redisClient
       .hgetAsync('userAuthToId', `${user.name}/${encryptedPassword}`)
