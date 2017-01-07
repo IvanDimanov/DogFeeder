@@ -79,6 +79,10 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
     subscriptions[subscriptions.length] = UserStore
       .setUser({sex, title})
       .subscribe({
+        next: () => this.setState({
+          successMessage: 'User successfully updated'
+        }),
+
         error: ({data}) => {
           const {errors} = this.state
 
