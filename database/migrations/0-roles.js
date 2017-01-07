@@ -3,11 +3,11 @@
 const roles = [{
   internalName: 'admin',
   uiName: 'admin',
-  permissions: ['canReadProfile', 'canUpdateProfile', 'canReadSystemLogs']
+  permissions: ['canReadProfile', 'canUpdateProfile', 'canUpdatePassword', 'canReadSystemLogs']
 }, {
   internalName: 'regularUser',
   uiName: 'user',
-  permissions: ['canReadProfile', 'canUpdateProfile', 'canReadSystemLogs']
+  permissions: ['canReadProfile', 'canUpdateProfile', 'canUpdatePassword', 'canReadSystemLogs']
 }, {
   internalName: 'guestSinger',
   uiName: 'singer',
