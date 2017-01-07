@@ -2,6 +2,7 @@
 'use strict'
 
 import React, {Component} from 'react'
+import {observer} from 'mobx-react'
 
 import LogsStore from '../stores/LogsStore'
 
@@ -9,10 +10,14 @@ import Paper from 'material-ui/Paper'
 import Subheader from 'material-ui/Subheader'
 import RefreshIndicator from 'material-ui/RefreshIndicator'
 import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table'
+import DropDownMenu from 'material-ui/DropDownMenu'
+import MenuItem from 'material-ui/MenuItem'
 import Snackbar from 'material-ui/Snackbar'
 
 import IconButton from 'material-ui/IconButton'
 import SyncIcon from 'material-ui/svg-icons/notification/sync'
+import ArrowLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
+import ArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right'
 
 import sharedStyles from '../shared/styles'
 
@@ -84,38 +89,50 @@ const styles = {
   tableCell: {
     textOverflow: 'initial',
     whiteSpace: 'pre'
+  },
+
+  tableFooter: {
+    textAlign: 'right',
+    paddingRight: 0,
+    color: 'grey'
+  },
+
+  arrowButtons: {
+    paddingTop: 18
+  },
+
+  pageCounter: {
+    verticalAlign: 'super',
+    padding: '0 18px'
   }
 }
 
 const subscriptions = []
 
-class Logs extends Component {
+const Logs = observer(class Logs extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      logs: [],
-      isLoading: true,
+      isLoading: false,
       errorMessage: ''
     }
 
     this.sync = this.sync.bind(this)
   }
 
-  sync () {
+  sync (page, maxResultsPerPage) {
     this.setState({
       isLoading: true,
       errorMessage: ''
     })
 
     subscriptions[subscriptions.length] = LogsStore
-      .getSystemLogs()
+      .sync(page, maxResultsPerPage)
       .subscribe({
-        next: ({data}) => this.setState({logs: data}),
-
-        error: () => this.setState({
+        error: ({data = {}}) => this.setState({
           isLoading: false,
-          errorMessage: 'Unable to load System logs'
+          errorMessage: data.errorMessage || 'Unable to load System logs'
         }),
 
         complete: () => this.setState({isLoading: false})
@@ -132,7 +149,7 @@ class Logs extends Component {
   }
 
   render () {
-    const {logs, isLoading, errorMessage} = this.state
+    const {isLoading, errorMessage} = this.state
 
     return <div>
       <div style={styles.refreshWrapper}>
@@ -150,11 +167,11 @@ class Logs extends Component {
           <Subheader style={styles.tableTitle}>System Logs</Subheader>
 
           <IconButton
-            onTouchTap={this.sync}
+            onTouchTap={() => this.sync()}
             iconStyle={styles.syncButton}
             disabled={isLoading}
           >
-            <SyncIcon color={'grey'} />
+            <SyncIcon color='grey' />
           </IconButton>
         </div>
 
@@ -180,7 +197,7 @@ class Logs extends Component {
             displayRowCheckbox={false}
             showRowHover
           >
-            {logs.map(({type, message, requestId, serviceName, instanceId, createdAt}, index) => (
+            {LogsStore.logs.map(({type, message, requestId, serviceName, instanceId, createdAt}, index) => (
               <TableRow key={index} style={styles.tableRow[type]}>
                 <TableRowColumn style={Object.assign({width: '5%'}, styles.tableCell)}>{serviceName}: {instanceId}</TableRowColumn>
                 <TableRowColumn style={Object.assign({width: '5%'}, styles.tableCell)}>{type.toUpperCase()}</TableRowColumn>
@@ -193,7 +210,39 @@ class Logs extends Component {
 
           <TableFooter
             adjustForCheckbox={false}
-          />
+          >
+            <TableRow>
+              <TableRowColumn colSpan='5' style={styles.tableFooter}>
+
+                <span style={styles.pageCounter}>Rows per page:</span>
+
+                <DropDownMenu
+                  value={LogsStore.maxResultsPerPage}
+                  onChange={(event, index, value) => this.sync(LogsStore.currentPage, value)}
+                >
+                  {LogsStore.validMaxResultsPerPage.map((maxResultsPerPage, index) => <MenuItem key={index} value={maxResultsPerPage} primaryText={maxResultsPerPage} />)}
+                </DropDownMenu>
+
+                <span style={styles.pageCounter}>{LogsStore.firstVisibleResult}-{LogsStore.lastVisibleResult} of {LogsStore.totalResults.toLocaleString()}</span>
+
+                <IconButton
+                  style={styles.arrowButtons}
+                  onTouchTap={() => this.sync(LogsStore.currentPage - 1)}
+                  disabled={LogsStore.currentPage === 1 || isLoading}
+                >
+                  <ArrowLeft color='grey' />
+                </IconButton>
+
+                <IconButton
+                  style={styles.arrowButtons}
+                  onTouchTap={() => this.sync(LogsStore.currentPage + 1)}
+                  disabled={isLoading}
+                >
+                  <ArrowRight color='grey' />
+                </IconButton>
+              </TableRowColumn>
+            </TableRow>
+          </TableFooter>
         </Table>
 
         <Snackbar
@@ -207,6 +256,6 @@ class Logs extends Component {
       </Paper>
     </div>
   }
-}
+})
 
 export default Logs
