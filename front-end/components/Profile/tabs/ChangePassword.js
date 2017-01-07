@@ -3,6 +3,8 @@
 
 import React, {Component} from 'react'
 
+import UserStore from '../../../stores/UserStore'
+
 import TextField from 'material-ui/TextField'
 import FlatButton from 'material-ui/FlatButton'
 import CircularProgress from 'material-ui/CircularProgress'
@@ -15,6 +17,7 @@ import sharedStyles from '../../../shared/styles'
 import profileStyles from '../styles'
 
 const config = __CONFIG__
+const subscriptions = []
 
 class ChangePassword extends Component {
   constructor (props) {
@@ -39,6 +42,11 @@ class ChangePassword extends Component {
     this.onRepeatPasswordChange = this.onRepeatPasswordChange.bind(this)
   }
 
+  componentWillUnmount () {
+    let subscription
+    while ((subscription = subscriptions.pop())) subscription.unsubscribe()
+  }
+
   onPasswordKey ({ctrlKey, key}) {
     const {newPassword} = this.state
     if (ctrlKey &&
@@ -49,69 +57,10 @@ class ChangePassword extends Component {
     }
   }
 
-  getPasswordStrongLevel (password) {
-    let level = 0
-    const labels = [
-      '',
-      'Lame',
-      'Silly',
-      'You can do better',
-      'Now we`re talking',
-      'That`s good enough',
-      'Добре си вече, стига',
-      'Ей програмистче малко',
-      'Ти сигурен ли си, че ще я запомниш',
-      'СУПЕР МАРИО!',
-      'Евала - признах тъ',
-      'СПАРТААААА!',
-      'За кракта ти безкрайни...',
-      '... 6! 6! 6!'
-    ]
-
-    const styles = [
-      {},
-      {color: 'green'},
-      {color: 'green'},
-      {color: 'lime'},
-      {color: 'lime'},
-      {color: 'yellow'},
-      {color: 'yellow'},
-      {color: 'orange', fontWeight: 'bold'},
-      {color: 'orange', fontWeight: 'bolder'},
-      {color: 'red', fontWeight: 'bolder'},
-      {color: 'red', fontWeight: 'bolder'},
-      {color: 'red', fontWeight: 'bolder'},
-      {color: 'red', fontWeight: 'bolder'},
-      {color: 'red', fontWeight: 'bolder'}
-    ]
-
-    if (password.length > 0) level++
-    if (password.length > 5) level++
-    if (password.length > 10) level++
-    if (password.length > 15) level++
-    if (password.length > 20) level++
-
-    if (password.match(/[0-9]/)) level++
-    if (password.match(/[a-z]/)) level++
-    if (password.match(/[A-Z]/)) level++
-
-    if (password.match(/[!@#$%\^]/)) level++
-    if (password.match(/[&\*\(\)_\+\-=]/)) level++
-    if (password.match(/[/\\]/)) level++
-    if (password.match(/[\[\]\{\}]/)) level++
-    if (password.match(/[';|\.,]/)) level++
-
-    return {
-      level,
-      label: labels[level],
-      style: styles[level]
-    }
-  }
-
   onNewPasswordChange (event) {
     const {repeatPassword, errors} = this.state
     const newPassword = event.target.value
-    const newPasswordStrongLevel = this.getPasswordStrongLevel(newPassword)
+    const newPasswordStrongLevel = UserStore.getPasswordStrongLevel(newPassword)
 
     errors.newPassword = newPasswordStrongLevel.level && newPasswordStrongLevel.level < 4 ? 'Please type a stronger Password' : ''
     errors.repeatPassword = repeatPassword !== newPassword ? 'Both passwords should match but are now different' : ''
@@ -143,20 +92,40 @@ class ChangePassword extends Component {
       errors
     })
 
-    setTimeout(() => {
-      this.setState({
-        newPassword: '',
-        repeatPassword: '',
-        isLoading: false,
-        successMessage: 'Password changed'
+    const {newPassword} = this.state
+
+    subscriptions[subscriptions.length] = UserStore
+      .setPassword(newPassword)
+      .subscribe({
+        next: () => this.setState({
+          newPassword: '',
+          repeatPassword: '',
+          successMessage: 'Password changed'
+        }),
+
+        error: ({data}) => {
+          const {errors} = this.state
+
+          if (data.errorCode === 'InvalidPassword') {
+            errors.newPassword = data.errorMessage
+          } else {
+            errors.general = [data.errorMessage]
+          }
+
+          this.setState({
+            isLoading: false,
+            errors
+          })
+        },
+
+        complete: () => this.setState({isLoading: false})
       })
-    }, 1000)
   }
 
   render () {
     const {newPassword, repeatPassword, isLoading, successMessage, errors} = this.state
 
-    const newPasswordStrongLevel = this.getPasswordStrongLevel(newPassword)
+    const newPasswordStrongLevel = UserStore.getPasswordStrongLevel(newPassword)
 
     return <div>
       <div style={profileStyles.fieldGroup}>
