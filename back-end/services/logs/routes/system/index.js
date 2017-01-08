@@ -68,15 +68,30 @@ const koaRoutes = koaRouter({
       return
     }
 
+    const totalResults = yield redisClient
+      .zcountAsync('logs', -Infinity, +Infinity)
+
+    if ((currentPage - 1) * maxResultsPerPage > totalResults) {
+      this.status = 400
+      this.body = {
+        errorCode: 'InvalidRange',
+        errorMessage: `Unable to serve ${currentPage * maxResultsPerPage} results out of maximum ${totalResults} results`
+      }
+      return
+    }
+
+    /* Return newest results first, so page 1 will have the lastly added logs */
+    const maxLimit = (totalResults - 1) - maxResultsPerPage * (currentPage - 1)
+    const minLimit = (totalResults - 1) - maxResultsPerPage * currentPage + 1
     const logs = yield redisClient
-      .zrangeAsync('logs', 0, -1)
+      .zrangeAsync('logs', Math.max(0, minLimit), Math.max(0, maxLimit))
       .map(jsonParseSafe)
 
     this.body = {
       currentPage,
       maxResultsPerPage,
-      totalResults: logs.length,
-      logs: logs.reverse().slice((currentPage - 1) * maxResultsPerPage, currentPage * maxResultsPerPage)
+      totalResults,
+      logs: logs.reverse()
     }
   })
 
