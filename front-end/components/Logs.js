@@ -229,7 +229,7 @@ const Logs = observer(class Logs extends Component {
                 <IconButton
                   style={styles.arrowButtons}
                   onTouchTap={() => this.sync(LogsStore.currentPage - 1)}
-                  disabled={LogsStore.currentPage === 1 || isLoading}
+                  disabled={isLoading || LogsStore.currentPage === 1}
                 >
                   <ArrowLeft color='grey' />
                 </IconButton>
@@ -237,7 +237,7 @@ const Logs = observer(class Logs extends Component {
                 <IconButton
                   style={styles.arrowButtons}
                   onTouchTap={() => this.sync(LogsStore.currentPage + 1)}
-                  disabled={isLoading}
+                  disabled={isLoading || LogsStore.lastVisibleResult === LogsStore.totalResults}
                 >
                   <ArrowRight color='grey' />
                 </IconButton>
