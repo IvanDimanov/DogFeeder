@@ -1,6 +1,7 @@
 'use strict'
 
-const diff = require('deep-diff').diff
+const fs = require('fs')
+const path = require('path')
 
 /* Secure the usage of only these environments */
 const validEnvironments = ['local', 'production']
@@ -8,51 +9,45 @@ if (!~validEnvironments.indexOf(process.env.NODE_ENV)) {
   throw new TypeError(`process.env.NODE_ENV must be one of ["${validEnvironments.join('", "')}"] but same is "${process.env.NODE_ENV}"`)
 }
 
-/* Verify that all configs are consistent */
-{
-  /*
-    Will combine the array JSON path with the JSON missing object.
-    Example:
-      if 'diff' is
-        DiffDeleted {
-          kind: 'D',
-          path: [ 'services', 'auth', 'maxTokenLifetime2' ],
-          lhs: 604800000 }
-
-      then 'getMissingObj(diff)' result will be
-        {
-          "services": {
-            "auth": {
-              "maxTokenLifetime2": 604800000
-            }
-          }
-        }
-  */
-  function getMissingObj (diff) {
-    let obj = diff.path
-      .reduce((str, path) => `${str}{"${path}":`, '')
-
-    obj += JSON.stringify(diff.lhs)
-    obj += '}'.repeat(diff.path.length)
-
-    return JSON.parse(obj)
-  }
-
-  const productionConfig = require('./environments/production.json')
-  const localConfig = require('./environments/local.json')
-
-  const missingKeysMessage = (diff(localConfig, productionConfig) || [])
-    .filter((diff) => diff.kind === 'D')
-    .reduce((accumulated, diff) => `${accumulated}\n${JSON.stringify(getMissingObj(diff), undefined, 2)}\n`, '')
-
-  if (missingKeysMessage.length) {
-    throw new ReferenceError(`Production configuration "./environments/production.json" have missing keys compared to\nLocal configuration "./environments/local.json":\n${missingKeysMessage}`)
-  }
+const config = {
+  services: {}
 }
 
-const environment = process.env.NODE_ENV
-const config = require(`./environments/${environment}`)
+/* Bind main configurations */
+fs
+  /* Get all configuration modules */
+  .readdirSync(path.resolve(__dirname, './modules'))
 
+  /* Be sure we're dealing only with configuration files */
+  .filter((itemPath) => fs.lstatSync(path.resolve(__dirname, './modules', itemPath)).isFile())
+
+  /* Secure consistent order of binding */
+  .sort()
+
+  /* Bind each configuration to the common 'config' */
+  .forEach((itemPath) => {
+    const moduleConfig = require(path.resolve(__dirname, './modules', itemPath))
+    Object.assign(config, moduleConfig)
+  })
+
+/* Bind service configurations */
+fs
+  /* Get all configuration modules */
+  .readdirSync(path.resolve(__dirname, './modules/services'))
+
+  /* Be sure we're dealing only with configuration files */
+  .filter((itemPath) => fs.lstatSync(path.resolve(__dirname, './modules/services', itemPath)).isFile())
+
+  /* Secure consistent order of binding */
+  .sort()
+
+  /* Bind each configuration to the common 'config' */
+  .forEach((itemPath) => {
+    const moduleConfig = require(path.resolve(__dirname, './modules/services', itemPath))
+    Object.assign(config.services, moduleConfig)
+  })
+
+const environment = process.env.NODE_ENV
 config.environment = environment
 
 module.exports = config

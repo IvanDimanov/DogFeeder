@@ -20,7 +20,7 @@
     "node": ">=7.0"
   },
   "dependencies": {
-    "deep-diff": "0.3.4"
+    "joi": "10.1.0"
   },
   "devDependencies": {}
 }
