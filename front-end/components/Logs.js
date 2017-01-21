@@ -5,6 +5,7 @@ import React, {Component} from 'react'
 import {observer} from 'mobx-react'
 
 import LogsStore from '../stores/LogsStore'
+import UserStore from '../stores/UserStore'
 
 import Paper from 'material-ui/Paper'
 import Subheader from 'material-ui/Subheader'
@@ -150,6 +151,17 @@ const Logs = observer(class Logs extends Component {
 
   render () {
     const {isLoading, errorMessage} = this.state
+
+    /* To be rendered for unauthorized Users */
+    if (!~UserStore.user.role.permissions.indexOf('canReadSystemLogs')) {
+      return <Paper style={sharedStyles.paper} zDepth={1}>
+        <div style={{textAlign: 'center'}}>
+          <h3>You have no Permission to read the System logs</h3>
+          <br />
+          Please contact <a href='mailto:spam@idimanov.com'>spam@idimanov.com</a> for more details.
+        </div>
+      </Paper>
+    }
 
     return <div>
       <div style={styles.refreshWrapper}>
