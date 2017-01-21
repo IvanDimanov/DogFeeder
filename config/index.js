@@ -50,4 +50,6 @@ fs
 const environment = process.env.NODE_ENV
 config.environment = environment
 
+console.log('Configuration in use', JSON.stringify(config, undefined , 2))
+
 module.exports = config
