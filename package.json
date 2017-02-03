@@ -24,7 +24,9 @@
     "start-back-end-production": "cross-env NODE_ENV=production node ./npm-scripts/start-back-end",
 
     "start-nginx-local"     : "cross-env NODE_ENV=local      node ./npm-scripts/start-nginx",
-    "start-nginx-production": "cross-env NODE_ENV=production node ./npm-scripts/start-nginx"
+    "start-nginx-production": "cross-env NODE_ENV=production node ./npm-scripts/start-nginx",
+
+    "prepush": "npm run lint"
   },
   "engines": {
     "node": ">=7.0"
@@ -40,6 +42,7 @@
     "cross-env": "3.1.4"
   },
   "devDependencies": {
+    "husky": "0.13.1",
     "standard": "8.6.0"
   }
 }
