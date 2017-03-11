@@ -39,7 +39,7 @@
     ]
   },
   "dependencies": {
-    "cross-env": "3.2.2"
+    "cross-env": "3.2.3"
   },
   "devDependencies": {
     "husky": "0.13.2",
