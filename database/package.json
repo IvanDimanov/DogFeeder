@@ -25,6 +25,6 @@
     "redis": "2.6.3"
   },
   "devDependencies": {
-    "standard": "8.5.0"
+    "standard": "8.6.0"
   }
 }
