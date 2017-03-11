@@ -14,7 +14,8 @@
   "scripts": {
     "start": "",
     "lint": "standard",
-    "build": "npm i && node --harmony_async_await index.js"
+    "build": "npm i && node --harmony_async_await index.js",
+    "build-pi": "node --harmony_async_await index.js"
   },
   "engines": {
     "node": ">=7.0"
