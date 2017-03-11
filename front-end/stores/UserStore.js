@@ -204,11 +204,11 @@ function UserStore () {
       if (password.match(/[a-z]/)) level++
       if (password.match(/[A-Z]/)) level++
 
-      if (password.match(/[!@#$%\^]/)) level++
-      if (password.match(/[&\*\(\)_\+\-=]/)) level++
+      if (password.match(/[!@#$%\\^]/)) level++
+      if (password.match(/[&*()_+-=]/)) level++
       if (password.match(/[/\\]/)) level++
-      if (password.match(/[\[\]\{\}]/)) level++
-      if (password.match(/[';|\.,]/)) level++
+      if (password.match(/[\\[\]\\{\\}]/)) level++
+      if (password.match(/[';|.,]/)) level++
 
       return {
         level,
