@@ -35,7 +35,7 @@ function getLoadBalancerLocationTemplates (serviceName, serviceConfig) {
   function getLocation (route) {
     return `
     location ~ ^${route}(.*)$ {
-      add_header 'Access-Control-Expose-Headers' 'Authorization' always;
+      add_header Access-Control-Expose-Headers Authorization;
 
       if ($args) {
         proxy_pass http://${serviceName}-balancer$uri?$args;
