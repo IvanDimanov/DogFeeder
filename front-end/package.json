@@ -16,7 +16,7 @@
     "start-dashboard": "cross-env NODE_ENV=local cross-env dashboard=true webpack-dashboard webpack-dev-server --content-base=./public --inline --progress --colors --hot",
     "lint": "standard",
     "build": "npm i && webpack",
-    "build-pi": "npm i && webpack"
+    "build-pi": "webpack"
   },
   "standard": {
     "ignore": [
