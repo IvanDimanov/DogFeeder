@@ -115,6 +115,14 @@ const koaRoutes = koaRouter({
 
     yield redisClient.hsetAsync('users', sessionUser.id, JSON.stringify(foundUser))
 
+    /**
+     * We need to enrich 'foundUser' object 'role' property
+     * coz it contains only {role: {internalName: '???'}}
+     */
+    foundUser.role = yield serviceProxy
+      .roles
+      .internalGetRolesByInternalName(getAuthorizationHeader({isInternalRequest: true}), foundUser.role.internalName)
+
     this.body = foundUser
   })
 
@@ -199,7 +207,7 @@ const koaRoutes = koaRouter({
       this.status = 400
       this.body = {
         errorCode: 'InvalidPassword',
-        errorMessage: 'Please type a stronger Password'
+        errorMessage: 'Please send a stronger Password'
       }
       return
     }
@@ -228,6 +236,16 @@ const koaRoutes = koaRouter({
 
     foundUser.encryptedPassword = encryptedPassword
     yield redisClient.hsetAsync('users', foundUser.id, JSON.stringify(foundUser))
+
+    delete foundUser.encryptedPassword
+
+    /**
+     * We need to enrich 'foundUser' object 'role' property
+     * coz it contains only {role: {internalName: '???'}}
+     */
+    foundUser.role = yield serviceProxy
+      .roles
+      .internalGetRolesByInternalName(getAuthorizationHeader({isInternalRequest: true}), foundUser.role.internalName)
 
     this.body = foundUser
   })
