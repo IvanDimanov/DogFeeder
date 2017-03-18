@@ -45,6 +45,6 @@
   },
   "devDependencies": {
     "husky": "0.13.2",
-    "standard": "8.6.0"
+    "standard": "9.0.2"
   }
 }
