@@ -4,6 +4,7 @@ const path = require('path')
 
 const koaRouter = require('koa-router')
 const {Board, Led} = require('johnny-five')
+const Raspi = require('raspi-io')
 
 const projectRootPath = '../../../../../'
 const config = require(`${projectRootPath}/config`)
@@ -20,14 +21,18 @@ const urlPrefix = `${apiPrefix}/${global.serviceName}`
  */
 const boardSetupMiddleware = (() => {
   logger.debug('Setting up Hardware board access')
-  const board = new Board()
+  const board = new Board({
+    io: new Raspi(),
+    repl: false,
+    debug: false
+  })
   let isBoardReady = false
   let led
 
   board.on('ready', function onBoardReady () {
     logger.info('Hardware board ready')
     isBoardReady = true
-    led = new Led('P1-17')
+    led = new Led('P1-11')
   })
 
   return function * boardSetupMiddleware (next) {
