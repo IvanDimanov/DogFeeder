@@ -1,0 +1,27 @@
+{
+  "name": "dog-feeder-service-hardware",
+  "version": "0.0.1",
+  "description": "React + MobX + IoT = fun",
+  "readme": "README.md",
+  "license": "MIT",
+  "authors": [
+    "Ivan Dimanov <DogFeeder@idimanov.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanDimanov/DogFeeder.git"
+  },
+  "scripts": {
+    "start": "",
+    "lint": "standard",
+    "build": "npm i"
+  },
+  "engines": {
+    "node": ">=7.0"
+  },
+  "dependencies": {
+    "johnny-five": "0.10.6",
+    "koa-router": "5.4.0"
+  },
+  "devDependencies": {}
+}
