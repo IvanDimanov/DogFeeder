@@ -21,35 +21,27 @@ import profileStyles from '../styles'
 
 const config = __CONFIG__
 
-const subscriptions = []
-
 const GeneralInfo = observer(class GeneralInfo extends Component {
-  constructor (props) {
-    super(props)
+  state = {
+    subscriptions: [],
+    sex: '',
+    title: '',
 
-    this.state = {
+    isLoading: false,
+    successMessage: '',
+    errors: {
+      general: [],
       sex: '',
-      title: '',
-
-      isLoading: false,
-      successMessage: '',
-      errors: {
-        general: [],
-        sex: '',
-        title: ''
-      }
+      title: ''
     }
-
-    this.save = this.save.bind(this)
-    this.toggleSex = this.toggleSex.bind(this)
   }
 
   componentWillUnmount () {
     let subscription
-    while ((subscription = subscriptions.pop())) subscription.unsubscribe()
+    while ((subscription = this.state.subscriptions.pop())) subscription.unsubscribe()
   }
 
-  toggleSex () {
+  toggleSex = () => {
     const {errors} = this.state
     errors.sex = ''
 
@@ -63,7 +55,7 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
     })
   }
 
-  save () {
+  save = () => {
     const {errors} = this.state
     errors.general = []
 
@@ -75,7 +67,7 @@ const GeneralInfo = observer(class GeneralInfo extends Component {
     const sex = this.state.sex || UserStore.user.sex
     const title = this.state.title || UserStore.user.title
 
-    subscriptions[subscriptions.length] = UserStore
+    this.state.subscriptions[this.state.subscriptions.length] = UserStore
       .setUser({sex, title})
       .subscribe({
         next: () => this.setState({

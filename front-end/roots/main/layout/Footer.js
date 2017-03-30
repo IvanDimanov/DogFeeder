@@ -13,11 +13,8 @@ const favoriteIcon = <FavoriteIcon />
 const nearbyIcon = <IconLocationOn />
 
 class Footer extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      selectedIndex: -1
-    }
+  state = {
+    selectedIndex: -1
   }
 
   render () {

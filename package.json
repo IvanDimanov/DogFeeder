@@ -38,7 +38,8 @@
       "notes",
       "shared-modules/utils/index.js",
       "front-end/shared/utils.js"
-    ]
+    ],
+    "parser": "babel-eslint"
   },
   "dependencies": {
     "cross-env": "3.2.3"

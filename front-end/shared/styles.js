@@ -7,6 +7,11 @@ const styles = {
     margin: '60px auto'
   },
 
+  refresh: {
+    position: 'relative',
+    display: 'inline-block'
+  },
+
   error: {
     color: 'red'
   }

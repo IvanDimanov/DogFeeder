@@ -66,42 +66,31 @@ styles.paper = Object.assign({}, sharedStyles.paper, styles.paper)
 Object.assign(styles.title, styles.titleInherits)
 Object.assign(styles.subTitle, styles.titleInherits)
 
-const subscriptions = []
-
 class Login extends Component {
-  constructor (props) {
-    super(props)
+  state = {
+    subscriptions: [],
+    user: {
+      name: '',
+      password: ''
+    },
+    lyrics: '',
 
-    this.state = {
-      user: {
-        name: '',
-        password: ''
-      },
-      lyrics: '',
-
-      isDialogOpened: false,
-      isLoading: false,
-      errors: {
-        general: '',
-        name: '',
-        password: '',
-        lyrics: ''
-      }
+    isDialogOpened: false,
+    isLoading: false,
+    errors: {
+      general: '',
+      name: '',
+      password: '',
+      lyrics: ''
     }
-
-    this.login = this.login.bind(this)
-    this.loginAsSinger = this.loginAsSinger.bind(this)
-    this.onEnterKey = this.onEnterKey.bind(this)
-    this.onLoginSuccess = this.onLoginSuccess.bind(this)
-    this.onLoginError = this.onLoginError.bind(this)
   }
 
   componentWillUnmount () {
     let subscription
-    while ((subscription = subscriptions.pop())) subscription.unsubscribe()
+    while ((subscription = this.state.subscriptions.pop())) subscription.unsubscribe()
   }
 
-  onLoginSuccess ({jqXHR}) {
+  onLoginSuccess = ({jqXHR}) => {
     if (!jqXHR.getResponseHeader('Authorization')) {
       const {errors} = this.state
       errors.general = 'Unable to get Authorization'
@@ -112,7 +101,7 @@ class Login extends Component {
     window.location.pathname = '/main.html'
   }
 
-  onLoginError ({data, errorThrown, textStatus, jqXHR}) {
+  onLoginError = ({data, errorThrown, textStatus, jqXHR}) => {
     const {errors} = this.state
     errors.general = data.errorMessage
     this.setState({
@@ -121,7 +110,7 @@ class Login extends Component {
     })
   }
 
-  login () {
+  login = () => {
     const {user, errors} = this.state
     user.name = String(user.name).trim()
     user.password = String(user.password).trim()
@@ -146,7 +135,7 @@ class Login extends Component {
     }
 
     this.setState({isLoading: true})
-    subscriptions[subscriptions.length] = AuthStore
+    this.state.subscriptions[this.state.subscriptions.length] = AuthStore
       .login(user)
       .subscribe({
         next: this.onLoginSuccess,
@@ -155,7 +144,7 @@ class Login extends Component {
       })
   }
 
-  loginAsSinger () {
+  loginAsSinger = () => {
     const {errors} = this.state
     let {lyrics} = this.state
 
@@ -174,7 +163,7 @@ class Login extends Component {
     }
 
     this.setState({isLoading: true})
-    subscriptions[subscriptions.length] = AuthStore
+    this.state.subscriptions[this.state.subscriptions.length] = AuthStore
       .loginAsSinger(lyrics)
       .subscribe({
         next: this.onLoginSuccess,
@@ -183,7 +172,7 @@ class Login extends Component {
       })
   }
 
-  onEnterKey (callback) {
+  onEnterKey = (callback) => {
     if (typeof callback !== 'function') {
       return
     }

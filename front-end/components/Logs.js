@@ -39,11 +39,6 @@ const styles = {
     marginTop: 156
   },
 
-  refresh: {
-    position: 'relative',
-    display: 'inline-block'
-  },
-
   tableTitle: {
     width: 'initial',
     display: 'inline-block',
@@ -108,27 +103,20 @@ const styles = {
   }
 }
 
-const subscriptions = []
-
 const Logs = observer(class Logs extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      isLoading: false,
-      errorMessage: ''
-    }
-
-    this.sync = this.sync.bind(this)
+  state = {
+    subscriptions: [],
+    isLoading: false,
+    errorMessage: ''
   }
 
-  sync (page, maxResultsPerPage) {
+  sync = (page, maxResultsPerPage) => {
     this.setState({
       isLoading: true,
       errorMessage: ''
     })
 
-    subscriptions[subscriptions.length] = LogsStore
+    this.state.subscriptions[this.state.subscriptions.length] = LogsStore
       .sync(page, maxResultsPerPage)
       .subscribe({
         error: ({data = {}}) => this.setState({
@@ -146,7 +134,7 @@ const Logs = observer(class Logs extends Component {
 
   componentWillUnmount () {
     let subscription
-    while ((subscription = subscriptions.pop())) subscription.unsubscribe()
+    while ((subscription = this.state.subscriptions.pop())) subscription.unsubscribe()
   }
 
   render () {
@@ -170,7 +158,7 @@ const Logs = observer(class Logs extends Component {
           left={0}
           top={0}
           status={isLoading ? 'loading' : 'hide'}
-          style={styles.refresh}
+          style={sharedStyles.refresh}
         />
       </div>
 

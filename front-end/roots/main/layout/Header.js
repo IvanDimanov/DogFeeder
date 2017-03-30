@@ -13,6 +13,7 @@ import MenuItem from 'material-ui/MenuItem'
 
 import HomeIcon from 'material-ui/svg-icons/action/home'
 import ProfileIcon from 'material-ui/svg-icons/action/face'
+import HardwareIcon from 'material-ui/svg-icons/hardware/developer-board'
 import LogsIcon from 'material-ui/svg-icons/action/assessment'
 import ExposureIcon from 'material-ui/svg-icons/image/exposure'
 import LogoutIcon from 'material-ui/svg-icons/action/power-settings-new'
@@ -25,17 +26,11 @@ const style = {
 }
 
 const Header = observer(class Header extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      isOpen: false
-    }
-
-    this.toggleOpen = this.toggleOpen.bind(this)
+  state = {
+    isOpen: false
   }
 
-  toggleOpen () {
+  toggleOpen = () => {
     const {isOpen} = this.state
     this.setState({isOpen: !isOpen})
   }
@@ -68,6 +63,14 @@ const Header = observer(class Header extends Component {
           style={style.link}
         >
           <MenuItem leftIcon={<ProfileIcon />}>Profile</MenuItem>
+        </Link>
+
+        <Link
+          to={'/hardware'}
+          onTouchTap={this.toggleOpen}
+          style={style.link}
+        >
+          <MenuItem leftIcon={<HardwareIcon />}>Hardware</MenuItem>
         </Link>
 
         <Link

@@ -23,6 +23,7 @@ import AuthStore from '../../stores/AuthStore'
 
 import Home from '../../components/Home'
 import Profile from '../../components/Profile'
+import Hardware from '../../components/Hardware'
 import Logs from '../../components/Logs'
 
 /* Page available only for authorized users */
@@ -37,6 +38,7 @@ render((
         <IndexRedirect to='home' />
         <Route path='/home' component={Home} />
         <Route path='/profile' component={Profile} />
+        <Route path='/hardware' component={Hardware} />
         <Route path='/logs' component={Logs} />
         <Route path='*' component={NotFound} />
       </Route>

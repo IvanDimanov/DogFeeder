@@ -17,37 +17,28 @@ import sharedStyles from '../../../shared/styles'
 import profileStyles from '../styles'
 
 const config = __CONFIG__
-const subscriptions = []
 
 class ChangePassword extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
+  state = {
+    subscriptions: [],
+    newPassword: '',
+    repeatPassword: '',
+    isLoading: false,
+    successMessage: '',
+    errors: {
+      general: [],
+      title: '',
       newPassword: '',
-      repeatPassword: '',
-      isLoading: false,
-      successMessage: '',
-      errors: {
-        general: [],
-        title: '',
-        newPassword: '',
-        repeatPassword: ''
-      }
+      repeatPassword: ''
     }
-
-    this.change = this.change.bind(this)
-    this.onPasswordKey = this.onPasswordKey.bind(this)
-    this.onNewPasswordChange = this.onNewPasswordChange.bind(this)
-    this.onRepeatPasswordChange = this.onRepeatPasswordChange.bind(this)
   }
 
   componentWillUnmount () {
     let subscription
-    while ((subscription = subscriptions.pop())) subscription.unsubscribe()
+    while ((subscription = this.state.subscriptions.pop())) subscription.unsubscribe()
   }
 
-  onPasswordKey ({ctrlKey, key}) {
+  onPasswordKey = ({ctrlKey, key}) => {
     const {newPassword} = this.state
     if (ctrlKey &&
         key === 'v'
@@ -57,7 +48,7 @@ class ChangePassword extends Component {
     }
   }
 
-  onNewPasswordChange (event) {
+  onNewPasswordChange = (event) => {
     const {repeatPassword, errors} = this.state
     const newPassword = event.target.value
     const newPasswordStrongLevel = UserStore.getPasswordStrongLevel(newPassword)
@@ -71,7 +62,7 @@ class ChangePassword extends Component {
     })
   }
 
-  onRepeatPasswordChange (event) {
+  onRepeatPasswordChange = (event) => {
     const {newPassword, errors} = this.state
     const repeatPassword = event.target.value
 
@@ -83,7 +74,7 @@ class ChangePassword extends Component {
     })
   }
 
-  change () {
+  change = () => {
     const {errors} = this.state
     errors.general = []
 
@@ -94,7 +85,7 @@ class ChangePassword extends Component {
 
     const {newPassword} = this.state
 
-    subscriptions[subscriptions.length] = UserStore
+    this.state.subscriptions[this.state.subscriptions.length] = UserStore
       .setPassword(newPassword)
       .subscribe({
         next: () => this.setState({

@@ -63,7 +63,8 @@ module.exports = {
       loader: 'babel',
       query: {
         cacheDirectory: process.env.NODE_ENV === 'local',
-        presets: ['react', 'latest']
+        presets: ['react', 'latest'],
+        plugins: ['transform-class-properties', 'transform-object-rest-spread']
       }
     }]
   },
