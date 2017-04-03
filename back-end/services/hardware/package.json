@@ -14,7 +14,7 @@
   "scripts": {
     "start": "",
     "lint": "standard",
-    "build": "npm i"
+    "build": "echo 'Building available only from direct board installation'"
   },
   "engines": {
     "node": ">=7.0"
