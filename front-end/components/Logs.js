@@ -3,6 +3,7 @@
 
 import React, {Component} from 'react'
 import {observer} from 'mobx-react'
+import {FadeIn} from 'animate-components'
 
 import LogsStore from '../stores/LogsStore'
 import UserStore from '../stores/UserStore'
@@ -151,7 +152,7 @@ const Logs = observer(class Logs extends Component {
       </Paper>
     }
 
-    return <div>
+    return <FadeIn>
       <div style={styles.refreshWrapper}>
         <RefreshIndicator
           size={40}
@@ -255,7 +256,7 @@ const Logs = observer(class Logs extends Component {
           onRequestClose={() => this.setState({errorMessage: ''})}
         />
       </Paper>
-    </div>
+    </FadeIn>
   }
 })
 

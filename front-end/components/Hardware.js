@@ -1,8 +1,9 @@
 /* global __CONFIG__ */
 'use strict'
 
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import {observer} from 'mobx-react'
+import {FadeIn} from 'animate-components'
 
 import HardwareStore from '../stores/HardwareStore'
 
@@ -61,44 +62,48 @@ const Hardware = observer(class Hardware extends Component {
       })
   }
 
+  toggleLoading = () => this.setState({isLoading: !this.state.isLoading})
+
   render () {
     const {isLoading, errorMessage} = this.state
 
-    return <Paper style={sharedStyles.paper} zDepth={1}>
-      {isLoading && <div style={styles.refreshWrapper}>
-        <RefreshIndicator
-          size={40}
-          left={0}
-          top={0}
-          status='loading'
-          style={sharedStyles.refresh}
+    return <FadeIn>
+      <Paper style={sharedStyles.paper} zDepth={1}>
+        {isLoading && <div style={styles.refreshWrapper}>
+          <RefreshIndicator
+            size={40}
+            left={0}
+            top={0}
+            status='loading'
+            style={sharedStyles.refresh}
+          />
+        </div>}
+
+        {HardwareStore.led.isOn
+          ? <FloatingActionButton
+            onTouchTap={() => this.setLed(false)}
+            disabled={isLoading}
+          >
+            <LedOnIcon />
+          </FloatingActionButton>
+
+          : <IconButton
+            style={styles.ledOffIconButton}
+            onTouchTap={() => this.setLed(true)}
+            disabled={isLoading}
+          >
+            <LedOffIcon />
+          </IconButton>
+        }
+
+        <Snackbar
+          open={Boolean(errorMessage)}
+          message={errorMessage}
+          autoHideDuration={config['front-end'].successMessageAutoHideDuration}
+          onRequestClose={() => this.setState({errorMessage: ''})}
         />
-      </div>}
-
-      {HardwareStore.led.isOn
-        ? <FloatingActionButton
-          onTouchTap={() => this.setLed(false)}
-          disabled={isLoading}
-        >
-          <LedOnIcon />
-        </FloatingActionButton>
-
-        : <IconButton
-          style={styles.ledOffIconButton}
-          onTouchTap={() => this.setLed(true)}
-          disabled={isLoading}
-        >
-          <LedOffIcon />
-        </IconButton>
-      }
-
-      <Snackbar
-        open={Boolean(errorMessage)}
-        message={errorMessage}
-        autoHideDuration={config['front-end'].successMessageAutoHideDuration}
-        onRequestClose={() => this.setState({errorMessage: ''})}
-      />
-    </Paper>
+      </Paper>
+    </FadeIn>
   }
 })
 

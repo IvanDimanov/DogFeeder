@@ -29,6 +29,7 @@
     "node": ">=7.0"
   },
   "dependencies": {
+    "animate-components": "0.4.0",
     "cross-env": "3.2.3",
     "material-ui": "0.16.1",
     "mobx": "2.6.1",
