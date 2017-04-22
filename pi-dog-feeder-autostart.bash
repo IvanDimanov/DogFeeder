@@ -24,10 +24,6 @@
 printf "\n------------------------------ Autostart: Starting Redis ------------------------------\n"
 sudo redis-server /etc/redis/6379.conf
 
-printf "\n------------------------------ Autostart: Binding Board GPIO components ------------------------------\n"
-sudo chmod -R 777 /sys/class/leds/led0
-sudo chmod -R 777 /dev/ttyAMA0
-
 printf "\n------------------------------ Autostart: Preparing the node runner ------------------------------\n"
 pm2 list
 
@@ -38,4 +34,4 @@ sudo chmod -R 777 /var/log/nginx/
 
 printf "\n------------------------------ Autostart: Start the app in the most Pi-related way ------------------------------\n"
 cd /home/pi/projects/DogFeeder/
-time npm run start-pi
+time sudo npm run bind-pi-hardware && npm run start-pi
