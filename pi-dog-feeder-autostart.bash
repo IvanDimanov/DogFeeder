@@ -21,21 +21,21 @@
 #
 #####################################################################
 
-printf "\nStarting Redis\n"
+printf "\n------------------------------ Autostart: Starting Redis ------------------------------\n"
 sudo redis-server /etc/redis/6379.conf
 
-printf "\nBinding Board GPIO components\n"
+printf "\n------------------------------ Autostart: Binding Board GPIO components ------------------------------\n"
 sudo chmod -R 777 /sys/class/leds/led0
 sudo chmod -R 777 /dev/ttyAMA0
 
-printf "\nPreparing the node runner\n"
+printf "\n------------------------------ Autostart: Preparing the node runner ------------------------------\n"
 pm2 list
 
-printf "\nGrand nginx permissions\n"
+printf "\n------------------------------ Autostart: Grand nginx permissions ------------------------------\n"
 sudo service nginx stop
 sudo chmod 777 /run
 sudo chmod -R 777 /var/log/nginx/
 
-printf "\nStart the app in the most Pi-related way\n"
+printf "\n------------------------------ Autostart: Start the app in the most Pi-related way ------------------------------\n"
 cd /home/pi/projects/DogFeeder/
 time npm run start-pi
