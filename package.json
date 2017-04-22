@@ -1,6 +1,6 @@
 {
   "name": "dog-feeder",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "React + MobX + IoT = fun",
   "readme": "README.md",
   "license": "MIT",
@@ -15,6 +15,7 @@
     "lint": "standard",
 
     "start-pi": "cd database && cross-env NODE_ENV=production npm run build-pi && cd ../front-end && cross-env NODE_ENV=production npm run build-pi && cd .. && npm run start-back-end-production && npm run start-nginx-production",
+    "bind-pi-hardware": "node ./npm-scripts/bind-pi-hardware",
 
     "start-local"     : "npm run build-local      && npm run start-back-end-local      && npm run start-nginx-local",
     "start-production": "npm run build-production && npm run start-back-end-production && npm run start-nginx-production",
