@@ -9,16 +9,18 @@ function bindModule (modulePath) {
   console.log(`Binding module "${modulePath}"`)
   const bindCommand = `sudo chmod -R 777 ${modulePath}`
 
-  exec(bindCommand, (error, stdout, stderr) => {
+  return new Promise((resolve, reject) => exec(bindCommand, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error: Unable to execute "${bindCommand}":\n${error}`)
-      process.exit(error.code)
+      reject(error)
     } else if (stderr) {
       console.error(`Error in executing "${bindCommand}"\n${stderr}`)
+      reject(stderr)
     } else {
       console.log(`Output for "${bindCommand}":${stdout}`)
+      resolve(stdout)
     }
-  })
+  }))
 }
 
 Promise.all(gpioModulePaths.map(bindModule))
