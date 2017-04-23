@@ -1,6 +1,7 @@
 'use strict'
 
 const path = require('path')
+const exec = require('child_process').exec
 
 const koaRouter = require('koa-router')
 const {Board, Led} = require('johnny-five')
@@ -20,19 +21,42 @@ const urlPrefix = `${apiPrefix}/${global.serviceName}`
  * and give access abilities to 'this'
  */
 const boardSetupMiddleware = (() => {
-  logger.debug('Setting up Hardware board access')
-  const board = new Board({
-    io: new Raspi(),
-    repl: false,
-    debug: false
-  })
+  let board
   let isBoardReady = false
   let led
 
-  board.on('ready', function onBoardReady () {
-    logger.info('Hardware board ready')
-    isBoardReady = true
-    led = new Led('P1-11')
+  const bindCommand = 'npm run bind-pi-hardware'
+  new Promise((resolve, reject) => exec(bindCommand, {cwd: projectRootPath}, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error: Unable to execute "${bindCommand}":\n${error}`)
+      reject(error)
+    } else if (stderr) {
+      console.error(`Error in executing "${bindCommand}"\n${stderr}`)
+      reject(stderr)
+    } else {
+      console.log(`Output for "${bindCommand}":${stdout}`)
+      resolve(stdout)
+    }
+  }))
+
+  .then(() => {
+    logger.debug('Setting up Hardware board access')
+    board = new Board({
+      io: new Raspi(),
+      repl: false,
+      debug: false
+    })
+
+    board.on('ready', function onBoardReady () {
+      logger.info('Hardware board ready')
+      isBoardReady = true
+      led = new Led('P1-11')
+    })
+  })
+
+  .catch((error) => {
+    logger.error('Unable to setup Board', error)
+    throw error
   })
 
   return function * boardSetupMiddleware (next) {

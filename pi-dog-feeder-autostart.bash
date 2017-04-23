@@ -34,4 +34,4 @@ sudo chmod -R 777 /var/log/nginx/
 
 printf "\n------------------------------ Autostart: Start the app in the most Pi-related way ------------------------------\n"
 cd /home/pi/projects/DogFeeder/
-time sudo npm run bind-pi-hardware && npm run start-pi
+npm run start-pi

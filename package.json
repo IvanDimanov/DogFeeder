@@ -14,7 +14,7 @@
   "scripts": {
     "lint": "standard",
 
-    "start-pi": "npm run start-back-end-production && npm run start-nginx-production",
+    "start-pi": "npm run bind-pi-hardware && npm run start-back-end-production && npm run start-nginx-production",
     "bind-pi-hardware": "node ./npm-scripts/bind-pi-hardware",
 
     "start-local"     : "npm run build-local      && npm run start-back-end-local      && npm run start-nginx-local",
