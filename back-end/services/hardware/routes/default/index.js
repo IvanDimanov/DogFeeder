@@ -3,46 +3,17 @@
 const path = require('path')
 
 const koaRouter = require('koa-router')
-const {Board, Led} = require('johnny-five')
-const Raspi = require('raspi-io')
 
 const projectRootPath = '../../../../../'
 const config = require(`${projectRootPath}/config`)
-const logger = require(`${projectRootPath}/shared-modules/logger`)
 const {koaJwtMiddleware} = require(`${projectRootPath}/shared-modules/session`)
 
 const routeName = path.parse(__dirname).name
 const apiPrefix = config.services[global.serviceName].routes[routeName].apiPathPrefix
 const urlPrefix = `${apiPrefix}/${global.serviceName}`
 
-/**
- * Bind all components as soon as the Board is ready
- * and give access abilities to 'this'
- */
-const boardSetupMiddleware = (() => {
-  logger.debug('Setting up Hardware board access')
-  const board = new Board({
-    io: new Raspi(),
-    repl: false,
-    debug: false
-  })
-  let isBoardReady = false
-  let led
-
-  board.on('ready', function onBoardReady () {
-    logger.info('Hardware board ready')
-    isBoardReady = true
-    led = new Led('P1-11')
-  })
-
-  return function * boardSetupMiddleware (next) {
-    this.isBoardReady = isBoardReady
-    this.board = board
-    this.led = led
-
-    yield next
-  }
-})()
+/* Handles all GPIO modules that are bound to the Pi Board */
+const boardSetupMiddleware = require('./board-middleware')
 
 const koaRoutes = koaRouter({
   /* Resolves to /api/v1/hardware */
