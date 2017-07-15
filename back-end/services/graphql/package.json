@@ -1,0 +1,31 @@
+{
+  "name": "dog-feeder-service-graphql",
+  "version": "0.0.1",
+  "description": "React + MobX + IoT = fun",
+  "readme": "README.md",
+  "license": "MIT",
+  "authors": [
+    "Ivan Dimanov <DogFeeder@idimanov.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IvanDimanov/DogFeeder.git"
+  },
+  "scripts": {
+    "start": "",
+    "lint": "standard",
+    "build": "echo 'Building available only from direct board installation'"
+  },
+  "engines": {
+    "node": ">=7.0"
+  },
+  "dependencies": {
+    "body-parser": "1.17.2",
+    "express": "4.15.3",
+    "graphql": "0.10.4",
+    "graphql-server-express": "1.0.0",
+    "graphql-tools": "1.1.0",
+    "on-finished": "2.3.0"
+  },
+  "devDependencies": {}
+}
