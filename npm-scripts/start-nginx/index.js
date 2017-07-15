@@ -99,7 +99,7 @@ ${webServicesNames
 
     # Static/public files (HTML, JS, CSS)
     location / {
-      try_files $uri $uri/ /front-end/public/$uri /front-end/public/$uri/;
+      try_files $uri /front-end/public/$uri /front-end/public/$uri.html;
     }
   }
 }`
