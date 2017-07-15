@@ -88,6 +88,43 @@ function * koaMiddleware (next) {
   logger.info(`--> ${this.method} ${this.originalUrl} ${this.status || 500} ${humanTotalTime} ${length ? bytes(length) : ''}`)
 }
 
+/* Tracks In requests to a express server using the local 'logger.*' functions */
+function expressMiddlewareBeforeAll (request, response, next) {
+  const startTime = process.hrtime()
+
+  global.requestId = request.header['x-request-id'] || uuid()
+  response.set('x-request-id', global.requestId)
+  request.startTime = startTime
+
+  logger.info(`<-- ${request.method} ${request.originalUrl}`)
+
+  next()
+}
+
+/* Tracks Out requests to a express server using the local 'logger.*' functions */
+function expressMiddlewareAfterAll (request, response, error) {
+  const endTime = process.hrtime(request.startTime)
+  const humanTotalTime = prettyHrtime(endTime).replace(' ', '')
+
+  if (!error) {
+    logger.info(`--> ${request.method} ${request.originalUrl} ${response.statusCode || 500} ${humanTotalTime}`)
+    return
+  }
+
+  const errorUuid = uuid()
+  response
+    .status(error.status || 500)
+    .send({
+      errorCode: 'InternalServerError',
+      errorMessage: error.message || 'We are unable to proceed with your request. Please excuse us and try again later.',
+      errorUuid
+    })
+
+  /* Log uncaught downstream errors */
+  logger.error('Internal Service Error', errorUuid, error.stack)
+  logger.error(`--> ${request.method} ${request.originalUrl} ${error.status || 500} ${humanTotalTime}`)
+}
+
 const logger = {
   custom,
   silly: async (...messages) => custom('silly', ...messages),
@@ -97,7 +134,9 @@ const logger = {
   warning: async (...messages) => custom('warning', ...messages),
   error: async (...messages) => custom('error', ...messages),
 
-  koaMiddleware
+  koaMiddleware,
+  expressMiddlewareBeforeAll,
+  expressMiddlewareAfterAll
 }
 
 module.exports = logger
