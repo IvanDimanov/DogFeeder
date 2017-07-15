@@ -42,6 +42,7 @@
     "parser": "babel-eslint"
   },
   "dependencies": {
+    "babel-eslint": "7.2.3",
     "cross-env": "3.2.3"
   },
   "devDependencies": {
