@@ -26,7 +26,7 @@ global.instanceId = instancePort
 const app = express()
 
 if (serviceConfig.trackRoutesLogs) {
-  app.use('*', (request, response, next) => {
+  app.use('*', bodyParser.json(), (request, response, next) => {
     logger.expressMiddlewareBeforeAll(request, response, next)
     onFinished(response, (error, response) => logger.expressMiddlewareAfterAll(request, response, error))
   })

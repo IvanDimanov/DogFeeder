@@ -96,7 +96,7 @@ function expressMiddlewareBeforeAll (request, response, next) {
   response.set('x-request-id', global.requestId)
   request.startTime = startTime
 
-  logger.info(`<-- ${request.method} ${request.originalUrl}`)
+  logger.info(`<-- ${request.method} ${request.originalUrl} ${JSON.stringify(request.body || {})}`)
 
   next()
 }
