@@ -39,6 +39,11 @@ function createServiceConfig () {
 
   function addServiceConfig (name) {
     return new Promise((resolve, reject) => {
+      if (!config.services[name].totalInitialInstances) {
+        resolve()
+        return
+      }
+
       content.apps.push({
         name,
         script: 'index.js',
