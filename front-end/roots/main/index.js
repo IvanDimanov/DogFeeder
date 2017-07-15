@@ -1,19 +1,11 @@
 'use strict'
 
-window.log = function log () {
-  return console.log.apply(console, arguments)
-}
-
 import React from 'react'
 import {render} from 'react-dom'
 import {Router, Route, hashHistory, IndexRedirect} from 'react-router'
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import injectTapEventPlugin from 'react-tap-event-plugin'
-
-// Needed for onTouchTap
-// http://stackoverflow.com/a/34015469/988941
-injectTapEventPlugin()
 
 import Layout from './layout'
 import NotFound from '../../components/NotFound'
@@ -25,6 +17,14 @@ import Home from '../../components/Home'
 import Profile from '../../components/Profile'
 import Hardware from '../../components/Hardware'
 import Logs from '../../components/Logs'
+
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+injectTapEventPlugin()
+
+window.log = function log () {
+  return console.log.apply(console, arguments)
+}
 
 /* Page available only for authorized users */
 if (!RestStore.getAuthorizationHeader()) {
