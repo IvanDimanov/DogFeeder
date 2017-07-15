@@ -17,6 +17,10 @@ const webServicesNames = Object.keys(config.services)
   .filter((name) => config.services[ name ].publiclyAccessedRoutes.length)
 
 function getLoadBalancerServersTemplate (serviceName, serviceConfig) {
+  if (!serviceConfig.totalInitialInstances) {
+    return
+  }
+
   function getServers () {
     return Array.from({length: serviceConfig.totalInitialInstances})
       .map((value, instancePort) => `    server ${config['front-end'].host}:${serviceConfig.defaultPort + instancePort};`)
