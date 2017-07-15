@@ -14,7 +14,7 @@ const schema = joi.object({
   service_users_totalInitialInstances: joi.number()
     .min(0)
     .max(50)
-    .default(1),
+    .default(0),
 
   service_users_trackRoutesLogs: joi.boolean()
     .truthy('TRUE')
