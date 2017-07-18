@@ -4,7 +4,8 @@ const fs = require('fs')
 const path = require('path')
 
 const jwtSimple = require('jwt-simple')
-const jwtMiddleware = require('koa-jwt')
+const koaJwt = require('koa-jwt')
+const expressJwt = require('express-jwt')
 
 const projectRootPath = '../../'
 const config = require(`${projectRootPath}/config`)
@@ -19,10 +20,14 @@ try {
 }
 
 function koaJwtMiddleware () {
-  return jwtMiddleware({
+  return koaJwt({
     secret: jwtSecret,
     key: 'session'
   })
+}
+
+function expressJwtMiddleware (options) {
+  return expressJwt(Object.assign({}, options, { secret: jwtSecret }))
 }
 
 function getAuthorizationHeader (data) {
@@ -44,6 +49,7 @@ function getAuthorizationHeaderForUser (user) {
 
 module.exports = {
   koaJwtMiddleware,
+  expressJwtMiddleware,
   getAuthorizationHeader,
   getAuthorizationHeaderForUser
 }
