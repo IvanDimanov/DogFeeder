@@ -42,7 +42,6 @@ function createServiceConfig () {
       content.apps.push({
         name,
         script: 'index.js',
-        node_args: '--harmony_async_await',
         cwd: path.resolve(__dirname, '../../back-end/services', name),
         instances: config.services[name].totalInitialInstances,
         max_restarts: 15,
