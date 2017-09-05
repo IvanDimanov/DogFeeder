@@ -90,12 +90,12 @@ function * koaMiddleware (next) {
 
 const logger = {
   custom,
-  silly: async (...messages) => await custom('silly', ...messages),
-  debug: async (...messages) => await custom('debug', ...messages),
-  info: async (...messages) => await custom('info', ...messages),
-  warn: async (...messages) => await custom('warning', ...messages),
-  warning: async (...messages) => await custom('warning', ...messages),
-  error: async (...messages) => await custom('error', ...messages),
+  silly: async (...messages) => custom('silly', ...messages),
+  debug: async (...messages) => custom('debug', ...messages),
+  info: async (...messages) => custom('info', ...messages),
+  warn: async (...messages) => custom('warning', ...messages),
+  warning: async (...messages) => custom('warning', ...messages),
+  error: async (...messages) => custom('error', ...messages),
 
   koaMiddleware
 }
