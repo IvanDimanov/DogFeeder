@@ -12,10 +12,14 @@
 #
 # STEP 2: Install the script
 #   - open file /etc/rc.local
+#
 #   - make the autostart executable by adding line:
 #       sudo chmod 755 /home/pi/projects/DogFeeder/pi-dog-feeder-autostart.bash
+#
 #   - execute the autostart file by adding line:
 #       su pi -c '/home/pi/projects/DogFeeder/pi-dog-feeder-autostart.bash'
+#
+#   - make sure 'exit 0' is in the EOF ;)
 #
 # More info at https://raspberrypi.stackexchange.com/a/8735
 #
