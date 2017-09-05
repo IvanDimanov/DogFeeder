@@ -13,21 +13,15 @@
   },
   "scripts": {
     "lint": "standard",
-
     "start-pi": "npm run start-back-end-production && npm run start-nginx-production",
-
-    "start-local"     : "npm run build-local      && npm run start-back-end-local      && npm run start-nginx-local",
+    "start-local": "npm run build-local      && npm run start-back-end-local      && npm run start-nginx-local",
     "start-production": "npm run build-production && npm run start-back-end-production && npm run start-nginx-production",
-
-    "build-local"     : "npm i && cross-env NODE_ENV=local      node ./npm-scripts/build-all-modules",
+    "build-local": "npm i && cross-env NODE_ENV=local      node ./npm-scripts/build-all-modules",
     "build-production": "npm i && cross-env NODE_ENV=production node ./npm-scripts/build-all-modules",
-
-    "start-back-end-local"     : "cross-env NODE_ENV=local      node ./npm-scripts/start-back-end",
+    "start-back-end-local": "cross-env NODE_ENV=local      node ./npm-scripts/start-back-end",
     "start-back-end-production": "cross-env NODE_ENV=production node ./npm-scripts/start-back-end",
-
-    "start-nginx-local"     : "cross-env NODE_ENV=local      node ./npm-scripts/start-nginx",
+    "start-nginx-local": "cross-env NODE_ENV=local      node ./npm-scripts/start-nginx",
     "start-nginx-production": "cross-env NODE_ENV=production node ./npm-scripts/start-nginx",
-
     "prepush": "npm run lint"
   },
   "engines": {
@@ -42,7 +36,8 @@
     "parser": "babel-eslint"
   },
   "dependencies": {
-    "cross-env": "3.2.3"
+    "cross-env": "3.2.3",
+    "joi": "^10.6.0"
   },
   "devDependencies": {
     "husky": "0.14.0",
