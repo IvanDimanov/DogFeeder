@@ -19,19 +19,19 @@ const koaRoutes = koaRouter({
   /* Resolves to /api/v1/hardware */
   prefix: urlPrefix
 })
-  /*  */
-  .post('/test/led/on', koaJwtMiddleware(), boardSetupMiddleware, function * () {
-    this.led.on()
+  /* Start rolling the food down the line */
+  .post('/relay/on', koaJwtMiddleware(), boardSetupMiddleware, function * () {
+    this.relay.on()
     this.body = {
-      isLedOn: this.led.isOn
+      isRelayOn: this.relay.isOn
     }
   })
 
-  /*  */
-  .post('/test/led/off', koaJwtMiddleware(), boardSetupMiddleware, function * () {
-    this.led.off()
+  /* Stop rolling the food down the line */
+  .post('/relay/off', koaJwtMiddleware(), boardSetupMiddleware, function * () {
+    this.relay.off()
     this.body = {
-      isLedOn: this.led.isOn
+      isRelayOn: this.relay.isOn
     }
   })
 

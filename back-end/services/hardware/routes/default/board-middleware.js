@@ -2,7 +2,7 @@
 
 const exec = require('child_process').exec
 
-const {Board, Led} = require('johnny-five')
+const { Board, Relay } = require('johnny-five')
 const Raspi = require('raspi-io')
 
 /* Some hardware like Leds needs to have permissions set as GPIO modules */
@@ -47,17 +47,17 @@ const boardSetupMiddleware = (() => {
     debug: false
   })
   let isBoardReady = false
-  let led
+  let relay
 
   board.on('ready', function onBoardReady () {
     isBoardReady = true
-    led = new Led('P1-11')
+    relay = new Relay(7)
   })
 
   return function * boardSetupMiddleware (next) {
     this.isBoardReady = isBoardReady
     this.board = board
-    this.led = led
+    this.relay = relay
 
     yield next
   }
