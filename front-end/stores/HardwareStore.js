@@ -9,14 +9,14 @@ useStrict(true)
 
 function HardwareStore () {
   extendObservable(this, {
-    led: {
+    relay: {
       isOn: false,
 
       set: () => (shouldSetOn = true) => Observable.create((observer) => RestStore
-        .post(`/api/v1/hardware/test/led/${shouldSetOn ? 'on' : 'off'}`)
+        .post(`/api/v1/hardware/relay/${shouldSetOn ? 'on' : 'off'}`)
         .subscribe({
           next: ({data}) => {
-            action(() => (this.led.isOn = data.isLedOn))()
+            action(() => (this.relay.isOn = data.isRelayOn))()
 
             observer.next(data)
             observer.complete()
@@ -27,9 +27,9 @@ function HardwareStore () {
         })
       ),
 
-      on: () => () => this.led.set(true),
-      off: () => () => this.led.set(false),
-      toggle: () => () => this.led.set(!this.led.isOn)
+      on: () => () => this.relay.set(true),
+      off: () => () => this.relay.set(false),
+      toggle: () => () => this.relay.set(!this.relay.isOn)
     }
   })
 }
