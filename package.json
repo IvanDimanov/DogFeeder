@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "babel-eslint": "7.2.3",
-    "cross-env": "3.2.4",
+    "cross-env": "5.1.2",
     "joi": "10.6.0"
   },
   "devDependencies": {
