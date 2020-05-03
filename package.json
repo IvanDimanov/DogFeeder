@@ -22,7 +22,9 @@
     "start-back-end-production": "cross-env NODE_ENV=production node ./npm-scripts/start-back-end",
     "start-nginx-local": "cross-env NODE_ENV=local      node ./npm-scripts/start-nginx",
     "start-nginx-production": "cross-env NODE_ENV=production node ./npm-scripts/start-nginx",
-    "prepush": "npm run lint"
+    "prepush": "npm run lint",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "engines": {
     "node": ">=7.0"
@@ -38,10 +40,12 @@
   "dependencies": {
     "babel-eslint": "7.2.3",
     "cross-env": "3.2.4",
-    "joi": "10.6.0"
+    "joi": "10.6.0",
+    "snyk": "^1.316.2"
   },
   "devDependencies": {
     "husky": "0.14.3",
     "standard": "10.0.3"
-  }
+  },
+  "snyk": true
 }
